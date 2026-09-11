@@ -52,7 +52,7 @@ Initial v1 scaffold implemented: SwiftUI app with the documented window flow (co
    - If video is being recorded, macOS's own native screen-recording indicator takes over — the OS highlights/shows the window or screen being captured (standard system behavior, e.g. like ScreenCaptureKit's capture picker/indicator), no custom UI needed for this part.
    - If audio-only, the app just hides with no visible capture indicator beyond the standard system recording indicator (menu bar icon macOS shows for any app using the mic/screen recording).
 
-4. **Clicking the app in the Dock while recording** opens a **processing window** showing:
+4. **Clicking the app in the Dock, or switching to it with Cmd+Tab, while recording** opens a **processing window** showing:
    - Short description of the settings applied (what's being recorded)
    - A timer counting up from recording start
    - **Pause** button — pauses recording

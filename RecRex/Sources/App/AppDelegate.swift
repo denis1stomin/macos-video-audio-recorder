@@ -26,6 +26,15 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         return true
     }
 
+    /// Switching to RecRex via Cmd+Tab activates the app but, unlike a Dock click, doesn't call
+    /// `applicationShouldHandleReopen` — so without this, Cmd+Tab during recording would bring
+    /// the app to the foreground with no window to show (the window is hidden while recording).
+    func applicationDidBecomeActive(_ notification: Notification) {
+        if window?.isVisible != true {
+            showWindow()
+        }
+    }
+
     func applicationShouldTerminateAfterLastWindowClosed(_ sender: NSApplication) -> Bool {
         false
     }
