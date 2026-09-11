@@ -98,6 +98,13 @@ final class AppState: ObservableObject {
             recordingStartDate = Date()
             isPaused = false
             stage = .recording
+            // In window-source mode, bring the app being captured to the front — otherwise the
+            // user is left staring at whatever was behind RecRex's own (now-hidden) window
+            // instead of the thing they're actually recording.
+            if case .window(let windowSource) = settings.videoSource,
+                let pid = windowSource.window.owningApplication?.processID {
+                NSRunningApplication(processIdentifier: pid)?.activate()
+            }
         } catch {
             permissionAlert = PermissionAlert(
                 title: "Couldn't start recording",
