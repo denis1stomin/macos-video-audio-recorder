@@ -1,0 +1,529 @@
+// !$*UTF8*$!
+{
+	archiveVersion = 1;
+	classes = {
+	};
+	objectVersion = 77;
+	objects = {
+
+/* Begin PBXBuildFile section */
+		0538F1376C22D060F1F0C552 /* RecordingManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = E25DA8582CE45157E0542914 /* RecordingManager.swift */; };
+		0FD4522774AECB7AC0F55C2A /* FileNaming.swift in Sources */ = {isa = PBXBuildFile; fileRef = 06822781BEBA46A4ADC06B67 /* FileNaming.swift */; };
+		134518879E5BDAB75D7C6C10 /* AppState.swift in Sources */ = {isa = PBXBuildFile; fileRef = 018BB1464B268C84534C807D /* AppState.swift */; };
+		4599A411FD3089149CFF1376 /* RootView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 23B446B7D2108346D28A5896 /* RootView.swift */; };
+		48D97AD684519B0D1599C36A /* StartButtonLabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD96F23E09A7DA81489D1ABB /* StartButtonLabelTests.swift */; };
+		5BB4CE666D9A977EF915FE35 /* ProcessingWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3B12E095C56220940C98B42 /* ProcessingWindowView.swift */; };
+		7D824046FFA0F86969ED07A3 /* SegmentSchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA195EF44FDA0386330AC6AE /* SegmentSchedulerTests.swift */; };
+		7EB769FB4FB4E9ABA57BDC8B /* RecRexApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131C1E1591E85F8E8DEDC865 /* RecRexApp.swift */; };
+		9B6C2ED24B9D9D3F073793C5 /* FileNamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82135AE757954C14A1468DE /* FileNamingTests.swift */; };
+		A07F295D71CCE79C749D9D72 /* CaptureModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5712EAA0261E43955CFACF7 /* CaptureModels.swift */; };
+		B499ACF43B7D6BC66761B8F4 /* PermissionsChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3736F26861A9A38041690CBD /* PermissionsChecker.swift */; };
+		BA0436975C0C59E6B1918A5E /* StartButtonLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3EC40A768DA4BFFAE415238 /* StartButtonLabel.swift */; };
+		BC9D92B580F88AD4E2F15387 /* MainWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B777A22E0BB9BB92966368 /* MainWindowView.swift */; };
+		E1BDFF0481BCB7EA81FC09B7 /* SourceSelectionView.swift in Sources */ = {isa = PBXBuildFile; fileRef = E6E08DCB30AB3E42E02EA45E /* SourceSelectionView.swift */; };
+		E98E05D81346A5CDD62DC02F /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 74B8396C42F95C280122A03F /* Assets.xcassets */; };
+		FBDD6E8A30593EF5F15F6400 /* SegmentScheduler.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7BBEAE5890CE3C5409003A24 /* SegmentScheduler.swift */; };
+		FEB1C4B4676A66653D64E77D /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = EA0FDDD2C1BB035C42E6D661 /* AppDelegate.swift */; };
+/* End PBXBuildFile section */
+
+/* Begin PBXContainerItemProxy section */
+		CD6C64FC8E80962582784902 /* PBXContainerItemProxy */ = {
+			isa = PBXContainerItemProxy;
+			containerPortal = A33B76BE8587FBF17A8667D5 /* Project object */;
+			proxyType = 1;
+			remoteGlobalIDString = C8F9D18CABFDE087E9A21D42;
+			remoteInfo = RecRex;
+		};
+/* End PBXContainerItemProxy section */
+
+/* Begin PBXFileReference section */
+		018BB1464B268C84534C807D /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
+		06822781BEBA46A4ADC06B67 /* FileNaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNaming.swift; sourceTree = "<group>"; };
+		131C1E1591E85F8E8DEDC865 /* RecRexApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecRexApp.swift; sourceTree = "<group>"; };
+		23B446B7D2108346D28A5896 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
+		3736F26861A9A38041690CBD /* PermissionsChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsChecker.swift; sourceTree = "<group>"; };
+		74B8396C42F95C280122A03F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
+		7BBEAE5890CE3C5409003A24 /* SegmentScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentScheduler.swift; sourceTree = "<group>"; };
+		9FAE957EE188C6E638C4CCD4 /* RecRexTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecRexTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		A4B777A22E0BB9BB92966368 /* MainWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowView.swift; sourceTree = "<group>"; };
+		AD96F23E09A7DA81489D1ABB /* StartButtonLabelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartButtonLabelTests.swift; sourceTree = "<group>"; };
+		C3B12E095C56220940C98B42 /* ProcessingWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ProcessingWindowView.swift; sourceTree = "<group>"; };
+		CA195EF44FDA0386330AC6AE /* SegmentSchedulerTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentSchedulerTests.swift; sourceTree = "<group>"; };
+		E25DA8582CE45157E0542914 /* RecordingManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecordingManager.swift; sourceTree = "<group>"; };
+		E5712EAA0261E43955CFACF7 /* CaptureModels.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CaptureModels.swift; sourceTree = "<group>"; };
+		E6E08DCB30AB3E42E02EA45E /* SourceSelectionView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SourceSelectionView.swift; sourceTree = "<group>"; };
+		E82135AE757954C14A1468DE /* FileNamingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNamingTests.swift; sourceTree = "<group>"; };
+		EA0FDDD2C1BB035C42E6D661 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		F3EC40A768DA4BFFAE415238 /* StartButtonLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartButtonLabel.swift; sourceTree = "<group>"; };
+		F571656BED6DA0666796D57D /* RecRex.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecRex.app; sourceTree = BUILT_PRODUCTS_DIR; };
+/* End PBXFileReference section */
+
+/* Begin PBXGroup section */
+		1D44031B618EFC9B086CD564 /* Views */ = {
+			isa = PBXGroup;
+			children = (
+				A4B777A22E0BB9BB92966368 /* MainWindowView.swift */,
+				C3B12E095C56220940C98B42 /* ProcessingWindowView.swift */,
+				23B446B7D2108346D28A5896 /* RootView.swift */,
+				E6E08DCB30AB3E42E02EA45E /* SourceSelectionView.swift */,
+			);
+			path = Views;
+			sourceTree = "<group>";
+		};
+		34CF22EBC4D8A4609E579F2A /* Resources */ = {
+			isa = PBXGroup;
+			children = (
+				74B8396C42F95C280122A03F /* Assets.xcassets */,
+			);
+			path = Resources;
+			sourceTree = "<group>";
+		};
+		5F7F2902E96AB70432DE7B24 /* Sources */ = {
+			isa = PBXGroup;
+			children = (
+				8EC887D29195E52A745B94E4 /* App */,
+				83D30D2A0760070E5C90CF1B /* Capture */,
+				F1F66CD798E11BAD5F54C5C1 /* Support */,
+				1D44031B618EFC9B086CD564 /* Views */,
+			);
+			path = Sources;
+			sourceTree = "<group>";
+		};
+		792E427C6A17A92E56428E3E = {
+			isa = PBXGroup;
+			children = (
+				A87B5FEA35D485FE07C2EBDC /* RecRex */,
+				D4DE961D29AD9B2F2D28D8CE /* RecRexTests */,
+				8485257DE84A8C9EF29A45F0 /* Products */,
+			);
+			sourceTree = "<group>";
+		};
+		83D30D2A0760070E5C90CF1B /* Capture */ = {
+			isa = PBXGroup;
+			children = (
+				E5712EAA0261E43955CFACF7 /* CaptureModels.swift */,
+				3736F26861A9A38041690CBD /* PermissionsChecker.swift */,
+				E25DA8582CE45157E0542914 /* RecordingManager.swift */,
+			);
+			path = Capture;
+			sourceTree = "<group>";
+		};
+		8485257DE84A8C9EF29A45F0 /* Products */ = {
+			isa = PBXGroup;
+			children = (
+				F571656BED6DA0666796D57D /* RecRex.app */,
+				9FAE957EE188C6E638C4CCD4 /* RecRexTests.xctest */,
+			);
+			name = Products;
+			sourceTree = "<group>";
+		};
+		8EC887D29195E52A745B94E4 /* App */ = {
+			isa = PBXGroup;
+			children = (
+				EA0FDDD2C1BB035C42E6D661 /* AppDelegate.swift */,
+				018BB1464B268C84534C807D /* AppState.swift */,
+				131C1E1591E85F8E8DEDC865 /* RecRexApp.swift */,
+			);
+			path = App;
+			sourceTree = "<group>";
+		};
+		A87B5FEA35D485FE07C2EBDC /* RecRex */ = {
+			isa = PBXGroup;
+			children = (
+				34CF22EBC4D8A4609E579F2A /* Resources */,
+				5F7F2902E96AB70432DE7B24 /* Sources */,
+			);
+			path = RecRex;
+			sourceTree = "<group>";
+		};
+		D4DE961D29AD9B2F2D28D8CE /* RecRexTests */ = {
+			isa = PBXGroup;
+			children = (
+				E82135AE757954C14A1468DE /* FileNamingTests.swift */,
+				CA195EF44FDA0386330AC6AE /* SegmentSchedulerTests.swift */,
+				AD96F23E09A7DA81489D1ABB /* StartButtonLabelTests.swift */,
+			);
+			path = RecRexTests;
+			sourceTree = "<group>";
+		};
+		F1F66CD798E11BAD5F54C5C1 /* Support */ = {
+			isa = PBXGroup;
+			children = (
+				06822781BEBA46A4ADC06B67 /* FileNaming.swift */,
+				7BBEAE5890CE3C5409003A24 /* SegmentScheduler.swift */,
+				F3EC40A768DA4BFFAE415238 /* StartButtonLabel.swift */,
+			);
+			path = Support;
+			sourceTree = "<group>";
+		};
+/* End PBXGroup section */
+
+/* Begin PBXNativeTarget section */
+		84866493EFF52186EA40653E /* RecRexTests */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = B134BA855364A741F5D15A74 /* Build configuration list for PBXNativeTarget "RecRexTests" */;
+			buildPhases = (
+				5AEFDF080748758FE51C06BD /* Sources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+				A0BCF2C7D4594837FC5235B8 /* PBXTargetDependency */,
+			);
+			name = RecRexTests;
+			packageProductDependencies = (
+			);
+			productName = RecRexTests;
+			productReference = 9FAE957EE188C6E638C4CCD4 /* RecRexTests.xctest */;
+			productType = "com.apple.product-type.bundle.unit-test";
+		};
+		C8F9D18CABFDE087E9A21D42 /* RecRex */ = {
+			isa = PBXNativeTarget;
+			buildConfigurationList = A2EE2F8F8878A3A46C067348 /* Build configuration list for PBXNativeTarget "RecRex" */;
+			buildPhases = (
+				08E17BCA453915B18540A04B /* Sources */,
+				0B816AD94E338EF852DD1383 /* Resources */,
+			);
+			buildRules = (
+			);
+			dependencies = (
+			);
+			name = RecRex;
+			packageProductDependencies = (
+			);
+			productName = RecRex;
+			productReference = F571656BED6DA0666796D57D /* RecRex.app */;
+			productType = "com.apple.product-type.application";
+		};
+/* End PBXNativeTarget section */
+
+/* Begin PBXProject section */
+		A33B76BE8587FBF17A8667D5 /* Project object */ = {
+			isa = PBXProject;
+			attributes = {
+				BuildIndependentTargetsInParallel = YES;
+				LastUpgradeCheck = 1430;
+				ORGANIZATIONNAME = "Denis Istomin";
+				TargetAttributes = {
+					C8F9D18CABFDE087E9A21D42 = {
+						ProvisioningStyle = Automatic;
+					};
+				};
+			};
+			buildConfigurationList = 0EE0E3E648CF7AF1C7DA50A4 /* Build configuration list for PBXProject "RecRex" */;
+			developmentRegion = en;
+			hasScannedForEncodings = 0;
+			knownRegions = (
+				Base,
+				en,
+			);
+			mainGroup = 792E427C6A17A92E56428E3E;
+			minimizedProjectReferenceProxies = 1;
+			preferredProjectObjectVersion = 77;
+			productRefGroup = 8485257DE84A8C9EF29A45F0 /* Products */;
+			projectDirPath = "";
+			projectRoot = "";
+			targets = (
+				C8F9D18CABFDE087E9A21D42 /* RecRex */,
+				84866493EFF52186EA40653E /* RecRexTests */,
+			);
+		};
+/* End PBXProject section */
+
+/* Begin PBXResourcesBuildPhase section */
+		0B816AD94E338EF852DD1383 /* Resources */ = {
+			isa = PBXResourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				E98E05D81346A5CDD62DC02F /* Assets.xcassets in Resources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXResourcesBuildPhase section */
+
+/* Begin PBXSourcesBuildPhase section */
+		08E17BCA453915B18540A04B /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				FEB1C4B4676A66653D64E77D /* AppDelegate.swift in Sources */,
+				134518879E5BDAB75D7C6C10 /* AppState.swift in Sources */,
+				A07F295D71CCE79C749D9D72 /* CaptureModels.swift in Sources */,
+				0FD4522774AECB7AC0F55C2A /* FileNaming.swift in Sources */,
+				BC9D92B580F88AD4E2F15387 /* MainWindowView.swift in Sources */,
+				B499ACF43B7D6BC66761B8F4 /* PermissionsChecker.swift in Sources */,
+				5BB4CE666D9A977EF915FE35 /* ProcessingWindowView.swift in Sources */,
+				7EB769FB4FB4E9ABA57BDC8B /* RecRexApp.swift in Sources */,
+				0538F1376C22D060F1F0C552 /* RecordingManager.swift in Sources */,
+				4599A411FD3089149CFF1376 /* RootView.swift in Sources */,
+				FBDD6E8A30593EF5F15F6400 /* SegmentScheduler.swift in Sources */,
+				E1BDFF0481BCB7EA81FC09B7 /* SourceSelectionView.swift in Sources */,
+				BA0436975C0C59E6B1918A5E /* StartButtonLabel.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+		5AEFDF080748758FE51C06BD /* Sources */ = {
+			isa = PBXSourcesBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+				9B6C2ED24B9D9D3F073793C5 /* FileNamingTests.swift in Sources */,
+				7D824046FFA0F86969ED07A3 /* SegmentSchedulerTests.swift in Sources */,
+				48D97AD684519B0D1599C36A /* StartButtonLabelTests.swift in Sources */,
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+		};
+/* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		A0BCF2C7D4594837FC5235B8 /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			target = C8F9D18CABFDE087E9A21D42 /* RecRex */;
+			targetProxy = CD6C64FC8E80962582784902 /* PBXContainerItemProxy */;
+		};
+/* End PBXTargetDependency section */
+
+/* Begin XCBuildConfiguration section */
+		38FD7C2A05FB92659EBE56E4 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = dwarf;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				ENABLE_TESTABILITY = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_DYNAMIC_NO_PIC = NO;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_OPTIMIZATION_LEVEL = 0;
+				GCC_PREPROCESSOR_DEFINITIONS = (
+					"$(inherited)",
+					"DEBUG=1",
+				);
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = INCLUDE_SOURCE;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_ACTIVE_COMPILATION_CONDITIONS = DEBUG;
+				SWIFT_OPTIMIZATION_LEVEL = "-Onone";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Debug;
+		};
+		62E04789345F1F97894F1827 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.recrex.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RecRex.app/Contents/MacOS/RecRex";
+			};
+			name = Debug;
+		};
+		A6BF81E775800B59693E475E /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ALWAYS_SEARCH_USER_PATHS = NO;
+				ARCHS = "$(ARCHS_STANDARD)";
+				CLANG_ANALYZER_NONNULL = YES;
+				CLANG_ANALYZER_NUMBER_OBJECT_CONVERSION = YES_AGGRESSIVE;
+				CLANG_CXX_LANGUAGE_STANDARD = "gnu++14";
+				CLANG_CXX_LIBRARY = "libc++";
+				CLANG_ENABLE_MODULES = YES;
+				CLANG_ENABLE_OBJC_ARC = YES;
+				CLANG_ENABLE_OBJC_WEAK = YES;
+				CLANG_WARN_BLOCK_CAPTURE_AUTORELEASING = YES;
+				CLANG_WARN_BOOL_CONVERSION = YES;
+				CLANG_WARN_COMMA = YES;
+				CLANG_WARN_CONSTANT_CONVERSION = YES;
+				CLANG_WARN_DEPRECATED_OBJC_IMPLEMENTATIONS = YES;
+				CLANG_WARN_DIRECT_OBJC_ISA_USAGE = YES_ERROR;
+				CLANG_WARN_DOCUMENTATION_COMMENTS = YES;
+				CLANG_WARN_EMPTY_BODY = YES;
+				CLANG_WARN_ENUM_CONVERSION = YES;
+				CLANG_WARN_INFINITE_RECURSION = YES;
+				CLANG_WARN_INT_CONVERSION = YES;
+				CLANG_WARN_NON_LITERAL_NULL_CONVERSION = YES;
+				CLANG_WARN_OBJC_IMPLICIT_RETAIN_SELF = YES;
+				CLANG_WARN_OBJC_LITERAL_CONVERSION = YES;
+				CLANG_WARN_OBJC_ROOT_CLASS = YES_ERROR;
+				CLANG_WARN_QUOTED_INCLUDE_IN_FRAMEWORK_HEADER = YES;
+				CLANG_WARN_RANGE_LOOP_ANALYSIS = YES;
+				CLANG_WARN_STRICT_PROTOTYPES = YES;
+				CLANG_WARN_SUSPICIOUS_MOVE = YES;
+				CLANG_WARN_UNGUARDED_AVAILABILITY = YES_AGGRESSIVE;
+				CLANG_WARN_UNREACHABLE_CODE = YES;
+				CLANG_WARN__DUPLICATE_METHOD_MATCH = YES;
+				COPY_PHASE_STRIP = NO;
+				CURRENT_PROJECT_VERSION = 1;
+				DEBUG_INFORMATION_FORMAT = "dwarf-with-dsym";
+				ENABLE_NS_ASSERTIONS = NO;
+				ENABLE_STRICT_OBJC_MSGSEND = YES;
+				GCC_C_LANGUAGE_STANDARD = gnu11;
+				GCC_NO_COMMON_BLOCKS = YES;
+				GCC_WARN_64_TO_32_BIT_CONVERSION = YES;
+				GCC_WARN_ABOUT_RETURN_TYPE = YES_ERROR;
+				GCC_WARN_UNDECLARED_SELECTOR = YES;
+				GCC_WARN_UNINITIALIZED_AUTOS = YES_AGGRESSIVE;
+				GCC_WARN_UNUSED_FUNCTION = YES;
+				GCC_WARN_UNUSED_VARIABLE = YES;
+				MACOSX_DEPLOYMENT_TARGET = 26.0;
+				MARKETING_VERSION = 0.1.0;
+				MTL_ENABLE_DEBUG_INFO = NO;
+				MTL_FAST_MATH = YES;
+				ONLY_ACTIVE_ARCH = NO;
+				PRODUCT_NAME = "$(TARGET_NAME)";
+				SDKROOT = macosx;
+				SWIFT_COMPILATION_MODE = wholemodule;
+				SWIFT_OPTIMIZATION_LEVEL = "-O";
+				SWIFT_VERSION = 6.0;
+			};
+			name = Release;
+		};
+		BA7C02D48AAA9474BF155ECB /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				BUNDLE_LOADER = "$(TEST_HOST)";
+				COMBINE_HIDPI_IMAGES = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+					"@loader_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.recrex.tests;
+				SDKROOT = macosx;
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RecRex.app/Contents/MacOS/RecRex";
+			};
+			name = Release;
+		};
+		E9987B81F29BEA5DD62D93E9 /* Debug */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RecRex/Resources/RecRex.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = RecRex;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Denis Istomin.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "RecRex needs microphone access to include your voice in recordings when microphone capture is enabled.";
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.recrex;
+				PRODUCT_NAME = RecRex;
+				SDKROOT = macosx;
+			};
+			name = Debug;
+		};
+		F29113A3CC97A3A0325EC6D8 /* Release */ = {
+			isa = XCBuildConfiguration;
+			buildSettings = {
+				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
+				CODE_SIGN_ENTITLEMENTS = RecRex/Resources/RecRex.entitlements;
+				CODE_SIGN_STYLE = Automatic;
+				COMBINE_HIDPI_IMAGES = YES;
+				ENABLE_HARDENED_RUNTIME = YES;
+				GENERATE_INFOPLIST_FILE = YES;
+				INFOPLIST_KEY_CFBundleDisplayName = RecRex;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
+				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Denis Istomin.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "RecRex needs microphone access to include your voice in recordings when microphone capture is enabled.";
+				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
+				LD_RUNPATH_SEARCH_PATHS = (
+					"$(inherited)",
+					"@executable_path/../Frameworks",
+				);
+				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.recrex;
+				PRODUCT_NAME = RecRex;
+				SDKROOT = macosx;
+			};
+			name = Release;
+		};
+/* End XCBuildConfiguration section */
+
+/* Begin XCConfigurationList section */
+		0EE0E3E648CF7AF1C7DA50A4 /* Build configuration list for PBXProject "RecRex" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				38FD7C2A05FB92659EBE56E4 /* Debug */,
+				A6BF81E775800B59693E475E /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		A2EE2F8F8878A3A46C067348 /* Build configuration list for PBXNativeTarget "RecRex" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				E9987B81F29BEA5DD62D93E9 /* Debug */,
+				F29113A3CC97A3A0325EC6D8 /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+		B134BA855364A741F5D15A74 /* Build configuration list for PBXNativeTarget "RecRexTests" */ = {
+			isa = XCConfigurationList;
+			buildConfigurations = (
+				62E04789345F1F97894F1827 /* Debug */,
+				BA7C02D48AAA9474BF155ECB /* Release */,
+			);
+			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Debug;
+		};
+/* End XCConfigurationList section */
+	};
+	rootObject = A33B76BE8587FBF17A8667D5 /* Project object */;
+}
