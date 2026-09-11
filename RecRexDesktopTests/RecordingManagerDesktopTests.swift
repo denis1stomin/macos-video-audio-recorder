@@ -4,61 +4,181 @@ import XCTest
 @testable import RecRex
 
 /// Exercises RecordingManager against the real ScreenCaptureKit/AVFoundation stack — actually
-/// capturing a few seconds of screen + system audio and asserting on the resulting file.
+/// capturing a few seconds of real screen/system-audio/microphone content and asserting on the
+/// resulting file, across every combination of video/system-audio/microphone the app's own UI
+/// can produce (per CLAUDE.md: "all combinations ... are supported"). The one combination left
+/// out is all three off, which isn't reachable through the app's UI (there's nothing to record).
+///
+/// Every video-capturing combination runs twice: once per connected display (so multi-monitor
+/// setups are exercised, not just the first display) and once against a randomly chosen
+/// capturable window, covering both SCContentFilter code paths RecordingManager uses.
 ///
 /// This needs real Screen Recording (and, for mic tests, Microphone) permission granted to
 /// whatever signing identity built this test bundle, so it only runs locally via
 /// `make test-desktop` (or the RecRexDesktopTests scheme in Xcode) — never in CI, which has no
 /// way to grant that permission on a headless runner.
 final class RecordingManagerDesktopTests: XCTestCase {
-    func testVideoAndSystemAudioProducesNonEmptyPlayableFile() async throws {
-        let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
-        guard let display = content.displays.first else {
-            throw XCTSkip("No capturable display in this environment")
-        }
-
-        let manager = RecordingManager()
-        let settings = RecordingSettings(
-            videoSource: .display(DisplaySource(display: display)),
-            captureSystemAudio: true,
-            captureMicrophone: false
-        )
-
-        try await manager.start(settings: settings)
-        try await Task.sleep(nanoseconds: 3_000_000_000)
-        let urls = await manager.stop()
-
-        addTeardownBlock {
-            for url in urls {
-                try? FileManager.default.removeItem(at: url)
-            }
-        }
-
-        XCTAssertFalse(urls.isEmpty, "Expected at least one recorded segment")
-
-        for url in urls {
-            let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
-            let size = attributes[.size] as? Int ?? 0
-            XCTAssertGreaterThan(size, 10_000, "\(url.lastPathComponent) should be a real recording, not an empty/near-empty file")
-
-            let asset = AVURLAsset(url: url)
-            let duration = try await asset.load(.duration)
-            XCTAssertGreaterThan(duration.seconds, 0, "\(url.lastPathComponent) should have non-zero duration")
-
-            let tracks = try await asset.load(.tracks)
-            XCTAssertTrue(tracks.contains { $0.mediaType == .video }, "Expected a video track")
-            XCTAssertTrue(tracks.contains { $0.mediaType == .audio }, "Expected a system-audio track")
+    func testVideoOnly() async throws {
+        for display in try await allDisplaySources() {
+            try await recordAndAssert(
+                settings: RecordingSettings(videoSource: .display(display), captureSystemAudio: false, captureMicrophone: false),
+                expectedVideoTracks: 1,
+                expectedAudioTracks: 0
+            )
         }
     }
 
-    func testMicrophoneOnlyProducesNonEmptyPlayableFile() async throws {
-        let manager = RecordingManager()
-        let settings = RecordingSettings(
-            videoSource: nil,
-            captureSystemAudio: false,
-            captureMicrophone: true
-        )
+    func testVideoAndSystemAudio() async throws {
+        for display in try await allDisplaySources() {
+            try await recordAndAssert(
+                settings: RecordingSettings(videoSource: .display(display), captureSystemAudio: true, captureMicrophone: false),
+                expectedVideoTracks: 1,
+                expectedAudioTracks: 1
+            )
+        }
+    }
 
+    func testVideoAndMicrophone() async throws {
+        for display in try await allDisplaySources() {
+            try await recordAndAssert(
+                settings: RecordingSettings(videoSource: .display(display), captureSystemAudio: false, captureMicrophone: true),
+                expectedVideoTracks: 1,
+                expectedAudioTracks: 1
+            )
+        }
+    }
+
+    func testVideoSystemAudioAndMicrophone() async throws {
+        for display in try await allDisplaySources() {
+            try await recordAndAssert(
+                settings: RecordingSettings(videoSource: .display(display), captureSystemAudio: true, captureMicrophone: true),
+                expectedVideoTracks: 1,
+                expectedAudioTracks: 2
+            )
+        }
+    }
+
+    func testWindowVideoOnly() async throws {
+        try await recordAndAssert(
+            settings: RecordingSettings(
+                videoSource: .window(try await randomWindowSource()),
+                captureSystemAudio: false,
+                captureMicrophone: false
+            ),
+            expectedVideoTracks: 1,
+            expectedAudioTracks: 0,
+            // Window content size is unpredictable (could be a tiny toolbar/status window), so
+            // this stays lenient — duration/track checks are the real correctness signal here.
+            minimumFileSize: 1_000
+        )
+    }
+
+    func testWindowVideoAndSystemAudio() async throws {
+        try await recordAndAssert(
+            settings: RecordingSettings(
+                videoSource: .window(try await randomWindowSource()),
+                captureSystemAudio: true,
+                captureMicrophone: false
+            ),
+            expectedVideoTracks: 1,
+            expectedAudioTracks: 1,
+            minimumFileSize: 1_000
+        )
+    }
+
+    func testWindowVideoAndMicrophone() async throws {
+        try await recordAndAssert(
+            settings: RecordingSettings(
+                videoSource: .window(try await randomWindowSource()),
+                captureSystemAudio: false,
+                captureMicrophone: true
+            ),
+            expectedVideoTracks: 1,
+            expectedAudioTracks: 1,
+            minimumFileSize: 1_000
+        )
+    }
+
+    func testWindowVideoSystemAudioAndMicrophone() async throws {
+        try await recordAndAssert(
+            settings: RecordingSettings(
+                videoSource: .window(try await randomWindowSource()),
+                captureSystemAudio: true,
+                captureMicrophone: true
+            ),
+            expectedVideoTracks: 1,
+            expectedAudioTracks: 2,
+            minimumFileSize: 1_000
+        )
+    }
+
+    func testSystemAudioOnly() async throws {
+        try await recordAndAssert(
+            settings: RecordingSettings(videoSource: nil, captureSystemAudio: true, captureMicrophone: false),
+            expectedVideoTracks: 0,
+            expectedAudioTracks: 1,
+            minimumFileSize: 1_000
+        )
+    }
+
+    func testMicrophoneOnly() async throws {
+        // This combination is also the mic-only bug we fixed (needsScreenCaptureKit forgot
+        // captureMicrophone, so the ScreenCaptureKit stream never started) — regressing here
+        // means that bug came back.
+        try await recordAndAssert(
+            settings: RecordingSettings(videoSource: nil, captureSystemAudio: false, captureMicrophone: true),
+            expectedVideoTracks: 0,
+            expectedAudioTracks: 1,
+            minimumFileSize: 1_000
+        )
+    }
+
+    func testSystemAudioAndMicrophone() async throws {
+        try await recordAndAssert(
+            settings: RecordingSettings(videoSource: nil, captureSystemAudio: true, captureMicrophone: true),
+            expectedVideoTracks: 0,
+            expectedAudioTracks: 2,
+            minimumFileSize: 1_000
+        )
+    }
+
+    // MARK: - Helpers
+
+    /// Every connected display, so multi-monitor setups actually get exercised instead of only
+    /// ever testing the first display.
+    private func allDisplaySources() async throws -> [DisplaySource] {
+        let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+        guard !content.displays.isEmpty else {
+            throw XCTSkip("No capturable display in this environment")
+        }
+        return content.displays.map(DisplaySource.init)
+    }
+
+    /// Picks a random capturable window, mirroring AppState.beginSourceSelection's own filtering
+    /// (has a title, isn't RecRex's own window) — a random pick rather than always "first" so
+    /// this exercises whatever window happens to be open locally instead of depending on a
+    /// specific one existing.
+    private func randomWindowSource() async throws -> WindowSource {
+        let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+        let ownBundleID = Bundle.main.bundleIdentifier
+        let candidates = content.windows
+            .filter { $0.title?.isEmpty == false }
+            .filter { $0.owningApplication?.bundleIdentifier != ownBundleID }
+        guard let window = candidates.randomElement() else {
+            throw XCTSkip("No capturable window in this environment")
+        }
+        return WindowSource(window: window)
+    }
+
+    private func recordAndAssert(
+        settings: RecordingSettings,
+        expectedVideoTracks: Int,
+        expectedAudioTracks: Int,
+        minimumFileSize: Int = 10_000,
+        file: StaticString = #filePath,
+        line: UInt = #line
+    ) async throws {
+        let manager = RecordingManager()
         try await manager.start(settings: settings)
         try await Task.sleep(nanoseconds: 3_000_000_000)
         let urls = await manager.stop()
@@ -69,12 +189,34 @@ final class RecordingManagerDesktopTests: XCTestCase {
             }
         }
 
-        XCTAssertFalse(urls.isEmpty, "Expected at least one recorded segment (this is the mic-only bug we fixed — regressing this means needsScreenCaptureKit broke again)")
+        XCTAssertFalse(urls.isEmpty, "Expected at least one recorded segment", file: file, line: line)
 
         for url in urls {
             let attributes = try FileManager.default.attributesOfItem(atPath: url.path)
             let size = attributes[.size] as? Int ?? 0
-            XCTAssertGreaterThan(size, 1_000, "\(url.lastPathComponent) should be a real recording, not an empty/near-empty file")
+            XCTAssertGreaterThan(
+                size, minimumFileSize,
+                "\(url.lastPathComponent) should be a real recording, not an empty/near-empty file",
+                file: file, line: line
+            )
+
+            let asset = AVURLAsset(url: url)
+            let duration = try await asset.load(.duration)
+            XCTAssertGreaterThan(duration.seconds, 0, "\(url.lastPathComponent) should have non-zero duration", file: file, line: line)
+
+            let tracks = try await asset.load(.tracks)
+            let videoTrackCount = tracks.filter { $0.mediaType == .video }.count
+            let audioTrackCount = tracks.filter { $0.mediaType == .audio }.count
+            XCTAssertEqual(
+                videoTrackCount, expectedVideoTracks,
+                "Unexpected video track count in \(url.lastPathComponent)",
+                file: file, line: line
+            )
+            XCTAssertEqual(
+                audioTrackCount, expectedAudioTracks,
+                "Unexpected audio track count in \(url.lastPathComponent)",
+                file: file, line: line
+            )
         }
     }
 }
