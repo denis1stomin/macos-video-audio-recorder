@@ -14,7 +14,7 @@ Initial v1 scaffold implemented: SwiftUI app with the documented window flow (co
 - v1 capture scope: **all combinations** of video, system audio, and microphone are supported, including audio-only recordings that mix system audio and microphone together.
 - Platform/format: target the **latest macOS** (current ScreenCaptureKit/AVFoundation APIs), output **MP4 (H.264)**.
 - Source control hosting: **GitHub** (already set up — `origin` is `git@github.com:denis1stomin/macos-video-audio-recorder.git`).
-- CI: **GitHub Actions** with a macOS runner, building (and later testing) on every push/PR.
+- CI: **GitHub Actions** with a macOS runner, building (and later testing) on every push/PR. Must use the `macos-26` runner image (not `macos-15`) since that's the first GitHub-hosted image with Xcode 26.x / the macOS 26 SDK — matches our `MACOSX_DEPLOYMENT_TARGET = 26.0`. `macos-15`'s Xcode only supports deployment targets up to 15.5.99, so it can't build this project (hit this the hard way: first CI run on `macos-15` produced a deployment-target-out-of-range warning).
 - Packaging: **universal binary** (arm64 + x86_64) in a single app bundle, so one download works on both Apple Silicon and Intel Macs.
 - Pause/resume: pausing stops **both video and audio** capture (no dead air or frozen-frame gap in the output), and the processing window shows a clear paused state (timer stops, button/label changes to indicate paused).
 - Icon: use a **simple SF Symbol placeholder** (e.g. a record/video-camera symbol) for both the app icon and menu bar item for now; real icon design deferred to later.
