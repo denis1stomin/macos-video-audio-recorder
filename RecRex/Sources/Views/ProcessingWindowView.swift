@@ -10,14 +10,14 @@ struct ProcessingWindowView: View {
     var body: some View {
         VStack(spacing: 20) {
             Text("Recording")
-                .font(.title2.bold())
+                .font(.largeTitle.bold())
 
             Text(descriptionText)
                 .foregroundStyle(.secondary)
                 .multilineTextAlignment(.center)
 
             Text(elapsedString)
-                .font(.system(size: 40, weight: .medium, design: .monospaced))
+                .font(.system(size: 48, weight: .medium, design: .monospaced))
 
             if appState.isPaused {
                 Label("Paused", systemImage: "pause.circle.fill")
@@ -29,11 +29,13 @@ struct ProcessingWindowView: View {
                     Button(appState.isPaused ? "Resume" : "Pause") {
                         appState.togglePause()
                     }
+                    .controlSize(.large)
                     Button("Stop and Save") {
                         Task { await appState.stopRecording() }
                     }
                     .keyboardShortcut(.defaultAction)
                     .buttonStyle(.borderedProminent)
+                    .controlSize(.large)
                 }
 
                 Spacer()
@@ -41,11 +43,12 @@ struct ProcessingWindowView: View {
                 Button("Discard") {
                     showingDiscardConfirmation = true
                 }
+                .controlSize(.large)
                 .foregroundStyle(.red)
             }
         }
         .padding(32)
-        .frame(width: 400, height: 260)
+        .frame(width: RecRexWindowSize.width)
         .dinoThemedBackground()
         .onReceive(timer) { now = $0 }
         .confirmationDialog(

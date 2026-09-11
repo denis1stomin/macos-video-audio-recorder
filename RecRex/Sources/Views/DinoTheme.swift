@@ -1,5 +1,13 @@
 import SwiftUI
 
+/// A single fixed width shared by all three app windows (configure, select source, processing),
+/// so the window doesn't visibly jump side-to-side as the app moves between them. Height is left
+/// for each window to size to its own content — forcing all three to the same height left the
+/// shorter windows surrounded by large, empty padding.
+enum RecRexWindowSize {
+    static let width: CGFloat = 560
+}
+
 /// Shared "green dino" accent palette, matching the app icon.
 enum DinoPalette {
     static let light = Color(red: 0.443, green: 0.690, blue: 0.463)

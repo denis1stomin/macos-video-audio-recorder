@@ -11,14 +11,16 @@ struct MainWindowView: View {
                     .font(.largeTitle.bold())
             }
 
-            Text("Choose what to record.")
-                .foregroundStyle(.secondary)
-
-            VStack(alignment: .leading, spacing: 12) {
-                RecordingOptionRow(title: "Record video", isOn: $appState.recordVideo)
-                RecordingOptionRow(title: "Record system audio", isOn: $appState.recordSystemAudio)
-                RecordingOptionRow(title: "Record microphone", isOn: $appState.recordMicrophone)
+            GroupBox("Choose what to record") {
+                VStack(alignment: .leading, spacing: 14) {
+                    RecordingOptionRow(title: "Record video", isOn: $appState.recordVideo)
+                    RecordingOptionRow(title: "Record system audio", isOn: $appState.recordSystemAudio)
+                    RecordingOptionRow(title: "Record microphone", isOn: $appState.recordMicrophone)
+                }
+                .padding(.vertical, 6)
+                .frame(maxWidth: .infinity, alignment: .leading)
             }
+            .padding(.top, 8)
 
             HStack {
                 Spacer()
@@ -34,11 +36,13 @@ struct MainWindowView: View {
                 }
                 .keyboardShortcut(.defaultAction)
                 .buttonStyle(.borderedProminent)
+                .controlSize(.large)
                 .disabled(appState.isLoadingSources || !appState.recordVideo && !appState.recordSystemAudio && !appState.recordMicrophone)
             }
+            .padding(.top, 8)
         }
-        .padding(24)
-        .frame(width: 360)
+        .padding(32)
+        .frame(width: RecRexWindowSize.width)
         .dinoThemedBackground()
     }
 }

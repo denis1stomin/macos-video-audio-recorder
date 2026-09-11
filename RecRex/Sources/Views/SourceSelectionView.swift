@@ -13,7 +13,7 @@ struct SourceSelectionView: View {
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
             Text("Choose a video source")
-                .font(.title2.bold())
+                .font(.title.bold())
 
             Picker("", selection: $mode) {
                 Text("Whole screen").tag(Mode.wholeScreen)
@@ -21,10 +21,11 @@ struct SourceSelectionView: View {
             }
             .pickerStyle(.segmented)
             .labelsHidden()
+            .controlSize(.large)
             .onChange(of: mode) { _, _ in appState.selectedSource = nil }
 
             ScrollView {
-                LazyVGrid(columns: [GridItem(.adaptive(minimum: 160), spacing: 16)], spacing: 16) {
+                LazyVGrid(columns: [GridItem(.adaptive(minimum: 208), spacing: 16)], spacing: 16) {
                     switch mode {
                     case .wholeScreen:
                         ForEach(appState.availableDisplays) { display in
@@ -50,21 +51,23 @@ struct SourceSelectionView: View {
                 }
                 .padding(.vertical, 4)
             }
-            .frame(minHeight: 260)
+            .frame(minHeight: 340)
 
             HStack {
                 Button("Back") { appState.cancelSourceSelection() }
+                    .controlSize(.large)
                 Spacer()
                 Button("Start Recording") {
                     Task { await appState.startRecording() }
                 }
                 .keyboardShortcut(.defaultAction)
                 .buttonStyle(.borderedProminent)
+                .controlSize(.large)
                 .disabled(appState.selectedSource == nil)
             }
         }
         .padding(24)
-        .frame(width: 560, height: 480)
+        .frame(width: RecRexWindowSize.width, height: 500)
         .dinoThemedBackground()
     }
 }
@@ -91,14 +94,14 @@ private struct SourceThumbnailView: View {
                     ProgressView()
                 }
             }
-            .frame(height: 110)
+            .frame(height: 143)
             .overlay(
                 RoundedRectangle(cornerRadius: 8)
                     .strokeBorder(isSelected ? Color.accentColor : Color.clear, lineWidth: 3)
             )
 
             Text(title)
-                .font(.caption)
+                .font(.footnote)
                 .lineLimit(1)
         }
         .contentShape(Rectangle())
@@ -110,8 +113,8 @@ private struct SourceThumbnailView: View {
 
     private func loadThumbnail() async {
         let config = SCStreamConfiguration()
-        config.width = 320
-        config.height = 200
+        config.width = 416
+        config.height = 260
         config.showsCursor = false
         guard let cgImage = try? await SCScreenshotManager.captureImage(contentFilter: filter, configuration: config) else {
             return
