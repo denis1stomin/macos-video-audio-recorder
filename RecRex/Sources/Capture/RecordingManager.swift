@@ -1,4 +1,5 @@
 import AVFoundation
+import os
 import ScreenCaptureKit
 
 final class RecordingManager: NSObject, @unchecked Sendable {
@@ -6,6 +7,7 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         case noShareableContentFound
     }
 
+    private let logger = Logger(subsystem: "dev.denis1stomin.recrex", category: "capture")
     private let queue = DispatchQueue(label: "dev.denis1stomin.recrex.capture")
 
     private var stream: SCStream?
@@ -20,6 +22,11 @@ final class RecordingManager: NSObject, @unchecked Sendable {
     private var isPaused = false
     private var isRollingOverSegment = false
     private var savedFileURLs: [URL] = []
+    private var hasLoggedFirstSample: [SCStreamOutputType: Bool] = [:]
+    private var hasLoggedNotReady: [SCStreamOutputType: Bool] = [:]
+    /// Where the current segment should end up once finished (in Downloads). We write to a
+    /// private temporary location first and move it there on completion — see beginSegmentWriter().
+    private var currentFinalURL: URL?
 
     /// Fires when ScreenCaptureKit stops the stream on its own (e.g. the captured window closed or its app quit).
     var onStreamStoppedUnexpectedly: (@Sendable (Error) -> Void)?
@@ -77,6 +84,7 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         }
         try await stream.startCapture()
         self.stream = stream
+        logger.notice("Stream started: video=\(settings.capturesVideo) systemAudio=\(settings.captureSystemAudio) mic=\(settings.captureMicrophone) size=\(width)x\(height)")
     }
 
     func setPaused(_ paused: Bool) {
@@ -122,9 +130,18 @@ final class RecordingManager: NSObject, @unchecked Sendable {
     private func beginSegmentWriter() throws {
         let fileName = FileNaming.segmentFileName(baseName: baseFileName, segmentIndex: segmentIndex)
         let proposedURL = downloadsDirectory.appendingPathComponent(fileName)
-        let url = FileNaming.availableURL(for: proposedURL)
+        let finalURL = FileNaming.availableURL(for: proposedURL)
 
-        let writer = try AVAssetWriter(outputURL: url, fileType: .mp4)
+        // Write into our own container's temporary directory first, then move the finished file
+        // into Downloads once writing completes. Writing an AVAssetWriter's continuous stream
+        // directly into the sandbox-redirected Downloads path has been observed to fail
+        // immediately (AVFoundationErrorDomain -11800 / NSOSStatusErrorDomain -16122); a single
+        // post-hoc move via the com.apple.security.files.downloads.read-write entitlement does
+        // not hit that failure.
+        let tempURL = FileManager.default.temporaryDirectory.appendingPathComponent(fileName)
+        try? FileManager.default.removeItem(at: tempURL)
+
+        let writer = try AVAssetWriter(outputURL: tempURL, fileType: .mp4)
 
         if settings.capturesVideo {
             let (width, height) = videoDimensions()
@@ -154,24 +171,51 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         }
 
         assetWriter = writer
+        currentFinalURL = finalURL
         segmentStartWallClock = Date()
+        logger.notice("Segment writer created at \(tempURL.path, privacy: .public), will move to \(finalURL.path, privacy: .public)")
     }
 
     private func finishCurrentSegment() async {
-        let writerToFinish: AVAssetWriter? = queue.sync {
+        let writerToFinish: AVAssetWriter?
+        let finalURL: URL?
+        (writerToFinish, finalURL) = queue.sync {
             let writer = assetWriter
+            let url = currentFinalURL
             videoInput?.markAsFinished()
             systemAudioInput?.markAsFinished()
             microphoneInput?.markAsFinished()
             assetWriter = nil
+            currentFinalURL = nil
             videoInput = nil
             systemAudioInput = nil
             microphoneInput = nil
-            return writer
+            return (writer, url)
         }
-        guard let writerToFinish, writerToFinish.status == .writing else { return }
+        guard let writerToFinish else { return }
+        guard writerToFinish.status == .writing else {
+            // The writer never received a sample (e.g. stopped immediately, or capture never
+            // started) — AVAssetWriter already created an empty placeholder file at init time,
+            // so clean it up instead of leaving 0-byte junk behind.
+            logger.error("Writer never reached .writing (status=\(writerToFinish.status.rawValue), error=\(String(describing: writerToFinish.error), privacy: .public)) — removing empty file")
+            try? FileManager.default.removeItem(at: writerToFinish.outputURL)
+            return
+        }
         await writerToFinish.finishWriting()
-        queue.sync { savedFileURLs.append(writerToFinish.outputURL) }
+        logger.notice("Finished writing \(writerToFinish.outputURL.lastPathComponent, privacy: .public) — finalStatus=\(writerToFinish.status.rawValue) error=\(String(describing: writerToFinish.error), privacy: .public)")
+
+        guard writerToFinish.status == .completed, let finalURL else {
+            return
+        }
+        do {
+            try FileManager.default.moveItem(at: writerToFinish.outputURL, to: finalURL)
+            logger.notice("Moved segment to \(finalURL.path, privacy: .public)")
+            queue.sync { savedFileURLs.append(finalURL) }
+        } catch {
+            logger.error("Failed to move segment to Downloads: \(String(describing: error), privacy: .public)")
+            // Better to surface the file at its temp location than to lose it silently.
+            queue.sync { savedFileURLs.append(writerToFinish.outputURL) }
+        }
     }
 
     /// Must be called on `queue`.
@@ -189,29 +233,76 @@ final class RecordingManager: NSObject, @unchecked Sendable {
     }
 }
 
+private func isCompleteVideoFrame(_ sampleBuffer: CMSampleBuffer) -> Bool {
+    guard let attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, createIfNecessary: false) as? [[SCStreamFrameInfo: Any]],
+        let attachments = attachmentsArray.first,
+        let statusRawValue = attachments[.status] as? Int,
+        let status = SCFrameStatus(rawValue: statusRawValue) else {
+        return false
+    }
+    return status == .complete
+}
+
 extension RecordingManager: SCStreamOutput {
     func stream(_ stream: SCStream, didOutputSampleBuffer sampleBuffer: CMSampleBuffer, of type: SCStreamOutputType) {
         queue.async { [self] in
-            guard sampleBuffer.isValid, !isPaused, !isRollingOverSegment, let writer = assetWriter else { return }
+            guard sampleBuffer.isValid else {
+                logger.error("Dropping invalid sample buffer of type \(String(describing: type), privacy: .public)")
+                return
+            }
+            guard !isPaused, !isRollingOverSegment else { return }
+            guard let writer = assetWriter else {
+                logger.error("Dropping sample of type \(String(describing: type), privacy: .public) — no assetWriter")
+                return
+            }
+
+            if hasLoggedFirstSample[type] != true {
+                hasLoggedFirstSample[type] = true
+                logger.notice("First sample received for type \(String(describing: type), privacy: .public), writer.status=\(writer.status.rawValue)")
+            }
 
             if writer.status == .unknown {
-                guard writer.startWriting() else { return }
+                guard writer.startWriting() else {
+                    logger.error("startWriting() failed: \(String(describing: writer.error), privacy: .public)")
+                    return
+                }
                 writer.startSession(atSourceTime: sampleBuffer.presentationTimeStamp)
+                logger.notice("Started writer session at \(sampleBuffer.presentationTimeStamp.seconds)")
             }
-            guard writer.status == .writing else { return }
+            guard writer.status == .writing else {
+                if hasLoggedNotReady[type] != true {
+                    hasLoggedNotReady[type] = true
+                    logger.error("Writer not in .writing status (\(writer.status.rawValue)), error=\(String(describing: writer.error), privacy: .public)")
+                }
+                return
+            }
 
             switch type {
             case .screen:
+                // ScreenCaptureKit also delivers periodic non-content "status" frames (idle,
+                // started, stopped, suspended, blank) that pass `sampleBuffer.isValid` but have
+                // no real pixel data — feeding one into the H.264 hardware encoder can fail the
+                // whole writer with an opaque VideoToolbox error. Only encode .complete frames.
+                guard isCompleteVideoFrame(sampleBuffer) else { return }
                 if let videoInput, videoInput.isReadyForMoreMediaData {
                     videoInput.append(sampleBuffer)
+                } else if hasLoggedNotReady[type] != true {
+                    hasLoggedNotReady[type] = true
+                    logger.error("videoInput not ready for more data (input=\(self.videoInput != nil))")
                 }
             case .audio:
                 if let systemAudioInput, systemAudioInput.isReadyForMoreMediaData {
                     systemAudioInput.append(sampleBuffer)
+                } else if hasLoggedNotReady[type] != true {
+                    hasLoggedNotReady[type] = true
+                    logger.error("systemAudioInput not ready for more data (input=\(self.systemAudioInput != nil))")
                 }
             case .microphone:
                 if let microphoneInput, microphoneInput.isReadyForMoreMediaData {
                     microphoneInput.append(sampleBuffer)
+                } else if hasLoggedNotReady[type] != true {
+                    hasLoggedNotReady[type] = true
+                    logger.error("microphoneInput not ready for more data (input=\(self.microphoneInput != nil))")
                 }
             @unknown default:
                 break
@@ -226,6 +317,7 @@ extension RecordingManager: SCStreamOutput {
 
 extension RecordingManager: SCStreamDelegate {
     func stream(_ stream: SCStream, didStopWithError error: Error) {
+        logger.error("Stream stopped with error: \(String(describing: error), privacy: .public)")
         onStreamStoppedUnexpectedly?(error)
     }
 }

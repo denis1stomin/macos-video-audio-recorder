@@ -47,5 +47,5 @@ struct RecordingSettings {
     var captureMicrophone: Bool
 
     var capturesVideo: Bool { videoSource != nil }
-    var needsScreenCaptureKit: Bool { capturesVideo || captureSystemAudio }
+    var needsScreenCaptureKit: Bool { capturesVideo || captureSystemAudio || captureMicrophone }
 }
