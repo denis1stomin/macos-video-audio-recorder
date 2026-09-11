@@ -46,6 +46,7 @@ struct ProcessingWindowView: View {
                 .controlSize(.large)
                 .foregroundStyle(.red)
             }
+            .padding(.top, 8)
         }
         .padding(32)
         .frame(width: RecRexWindowSize.width)
