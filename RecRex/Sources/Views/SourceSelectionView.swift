@@ -29,7 +29,7 @@ struct SourceSelectionView: View {
                     case .wholeScreen:
                         ForEach(appState.availableDisplays) { display in
                             SourceThumbnailView(
-                                title: "Display \(display.id)",
+                                title: display.resolutionText,
                                 isSelected: appState.selectedSource == .display(display),
                                 filter: SCContentFilter(display: display.display, excludingApplications: [], exceptingWindows: [])
                             ) {

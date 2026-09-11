@@ -121,6 +121,11 @@ final class AppState: ObservableObject {
         reset()
     }
 
+    func discardRecording() async {
+        _ = await recordingManager.stop(discard: true)
+        reset()
+    }
+
     private func revealInFinder(_ urls: [URL]) {
         guard !urls.isEmpty else {
             let downloads = FileManager.default.urls(for: .downloadsDirectory, in: .userDomainMask).first

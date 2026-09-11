@@ -5,6 +5,8 @@ struct DisplaySource: Identifiable, Hashable, @unchecked Sendable {
 
     var id: CGDirectDisplayID { display.displayID }
 
+    var resolutionText: String { "Display \(display.width) × \(display.height)" }
+
     static func == (lhs: DisplaySource, rhs: DisplaySource) -> Bool {
         lhs.id == rhs.id
     }

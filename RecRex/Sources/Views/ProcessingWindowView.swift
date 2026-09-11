@@ -3,6 +3,7 @@ import SwiftUI
 struct ProcessingWindowView: View {
     @ObservedObject var appState: AppState
     @State private var now = Date()
+    @State private var showingDiscardConfirmation = false
 
     private let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
 
@@ -23,21 +24,42 @@ struct ProcessingWindowView: View {
                     .foregroundStyle(.orange)
             }
 
-            HStack(spacing: 16) {
-                Button(appState.isPaused ? "Resume" : "Pause") {
-                    appState.togglePause()
+            HStack {
+                HStack(spacing: 16) {
+                    Button(appState.isPaused ? "Resume" : "Pause") {
+                        appState.togglePause()
+                    }
+                    Button("Stop and Save") {
+                        Task { await appState.stopRecording() }
+                    }
+                    .keyboardShortcut(.defaultAction)
+                    .buttonStyle(.borderedProminent)
                 }
-                Button("Stop") {
-                    Task { await appState.stopRecording() }
+
+                Spacer()
+
+                Button("Discard") {
+                    showingDiscardConfirmation = true
                 }
-                .keyboardShortcut(.defaultAction)
-                .buttonStyle(.borderedProminent)
+                .foregroundStyle(.red)
             }
         }
         .padding(32)
-        .frame(width: 360, height: 260)
+        .frame(width: 400, height: 260)
         .dinoThemedBackground()
         .onReceive(timer) { now = $0 }
+        .confirmationDialog(
+            "Discard this recording?",
+            isPresented: $showingDiscardConfirmation,
+            titleVisibility: .visible
+        ) {
+            Button("Discard Recording", role: .destructive) {
+                Task { await appState.discardRecording() }
+            }
+            Button("Cancel", role: .cancel) {}
+        } message: {
+            Text("This can't be undone. The recording won't be saved.")
+        }
     }
 
     private var descriptionText: String {

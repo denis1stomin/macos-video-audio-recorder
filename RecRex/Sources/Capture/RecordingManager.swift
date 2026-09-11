@@ -83,13 +83,21 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         queue.async { self.isPaused = paused }
     }
 
-    func stop() async -> [URL] {
+    func stop(discard: Bool = false) async -> [URL] {
         if let stream {
             try? await stream.stopCapture()
         }
         stream = nil
         await finishCurrentSegment()
-        return queue.sync { savedFileURLs }
+        let urls = queue.sync { savedFileURLs }
+        guard !discard else {
+            for url in urls {
+                try? FileManager.default.removeItem(at: url)
+            }
+            queue.sync { savedFileURLs = [] }
+            return []
+        }
+        return urls
     }
 
     private func videoDimensions() -> (width: Int, height: Int) {
