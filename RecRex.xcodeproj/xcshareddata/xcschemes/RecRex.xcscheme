@@ -30,8 +30,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "84866493EFF52186EA40653E"
-               BuildableName = "RecRexTests.xctest"
-               BlueprintName = "RecRexTests"
+               BuildableName = "RecRexUnitTests.xctest"
+               BlueprintName = "RecRexUnitTests"
                ReferencedContainer = "container:RecRex.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
@@ -59,8 +59,8 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "84866493EFF52186EA40653E"
-               BuildableName = "RecRexTests.xctest"
-               BlueprintName = "RecRexTests"
+               BuildableName = "RecRexUnitTests.xctest"
+               BlueprintName = "RecRexUnitTests"
                ReferencedContainer = "container:RecRex.xcodeproj">
             </BuildableReference>
          </TestableReference>

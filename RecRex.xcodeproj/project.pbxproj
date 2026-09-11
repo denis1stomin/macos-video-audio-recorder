@@ -57,7 +57,7 @@
 		5C6A0490EE44797AFC48F90C /* DinoTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DinoTheme.swift; sourceTree = "<group>"; };
 		74B8396C42F95C280122A03F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7BBEAE5890CE3C5409003A24 /* SegmentScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentScheduler.swift; sourceTree = "<group>"; };
-		9FAE957EE188C6E638C4CCD4 /* RecRexTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecRexTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FAE957EE188C6E638C4CCD4 /* RecRexUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecRexUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4B777A22E0BB9BB92966368 /* MainWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowView.swift; sourceTree = "<group>"; };
 		AD96F23E09A7DA81489D1ABB /* StartButtonLabelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartButtonLabelTests.swift; sourceTree = "<group>"; };
 		B5E4F1EEDFCF399A60D8D944 /* RecordingManagerDesktopTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecordingManagerDesktopTests.swift; sourceTree = "<group>"; };
@@ -127,7 +127,7 @@
 			isa = PBXGroup;
 			children = (
 				A87B5FEA35D485FE07C2EBDC /* RecRex */,
-				D4DE961D29AD9B2F2D28D8CE /* RecRexTests */,
+				D4DE961D29AD9B2F2D28D8CE /* RecRexUnitTests */,
 				8485257DE84A8C9EF29A45F0 /* Products */,
 				779AB4461386AAE808D236CE /* Frameworks */,
 				7971C4BC5AA3E4FB4F98A694 /* RecRexDesktopTests */,
@@ -157,7 +157,7 @@
 			isa = PBXGroup;
 			children = (
 				F571656BED6DA0666796D57D /* RecRex.app */,
-				9FAE957EE188C6E638C4CCD4 /* RecRexTests.xctest */,
+				9FAE957EE188C6E638C4CCD4 /* RecRexUnitTests.xctest */,
 				098BAF841AC505DF53C01308 /* RecRexDesktopTests.xctest */,
 			);
 			name = Products;
@@ -190,14 +190,15 @@
 			name = "OS X";
 			sourceTree = "<group>";
 		};
-		D4DE961D29AD9B2F2D28D8CE /* RecRexTests */ = {
+		D4DE961D29AD9B2F2D28D8CE /* RecRexUnitTests */ = {
 			isa = PBXGroup;
 			children = (
 				E82135AE757954C14A1468DE /* FileNamingTests.swift */,
 				CA195EF44FDA0386330AC6AE /* SegmentSchedulerTests.swift */,
 				AD96F23E09A7DA81489D1ABB /* StartButtonLabelTests.swift */,
 			);
-			path = RecRexTests;
+			name = RecRexUnitTests;
+			path = RecRexUnitTests;
 			sourceTree = "<group>";
 		};
 		F1F66CD798E11BAD5F54C5C1 /* Support */ = {
@@ -213,9 +214,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		84866493EFF52186EA40653E /* RecRexTests */ = {
+		84866493EFF52186EA40653E /* RecRexUnitTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B134BA855364A741F5D15A74 /* Build configuration list for PBXNativeTarget "RecRexTests" */;
+			buildConfigurationList = B134BA855364A741F5D15A74 /* Build configuration list for PBXNativeTarget "RecRexUnitTests" */;
 			buildPhases = (
 				5AEFDF080748758FE51C06BD /* Sources */,
 			);
@@ -224,9 +225,9 @@
 			dependencies = (
 				A0BCF2C7D4594837FC5235B8 /* PBXTargetDependency */,
 			);
-			name = RecRexTests;
-			productName = RecRexTests;
-			productReference = 9FAE957EE188C6E638C4CCD4 /* RecRexTests.xctest */;
+			name = RecRexUnitTests;
+			productName = RecRexUnitTests;
+			productReference = 9FAE957EE188C6E638C4CCD4 /* RecRexUnitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
 		B78CDAB13A1CDA81213B5EC7 /* RecRexDesktopTests */ = {
@@ -293,7 +294,7 @@
 			projectRoot = "";
 			targets = (
 				C8F9D18CABFDE087E9A21D42 /* RecRex */,
-				84866493EFF52186EA40653E /* RecRexTests */,
+				84866493EFF52186EA40653E /* RecRexUnitTests */,
 				B78CDAB13A1CDA81213B5EC7 /* RecRexDesktopTests */,
 			);
 		};
@@ -474,7 +475,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.recrex.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.recrex.unittests;
 				SDKROOT = macosx;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RecRex.app/Contents/MacOS/RecRex";
 			};
@@ -553,7 +554,7 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.recrex.tests;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.recrex.unittests;
 				SDKROOT = macosx;
 				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RecRex.app/Contents/MacOS/RecRex";
 			};
@@ -653,7 +654,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		B134BA855364A741F5D15A74 /* Build configuration list for PBXNativeTarget "RecRexTests" */ = {
+		B134BA855364A741F5D15A74 /* Build configuration list for PBXNativeTarget "RecRexUnitTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				62E04789345F1F97894F1827 /* Debug */,
