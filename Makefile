@@ -4,7 +4,7 @@ CONFIGURATION := Debug
 DERIVED_DATA := build
 APP_PATH := $(DERIVED_DATA)/Build/Products/$(CONFIGURATION)/RecRex.app
 
-.PHONY: build run test clean
+.PHONY: build run test test-desktop clean
 
 build:
 	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration $(CONFIGURATION) \
@@ -15,6 +15,13 @@ run: build
 
 test:
 	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration $(CONFIGURATION) \
+		-destination 'platform=macOS' -derivedDataPath $(DERIVED_DATA) test
+
+# Desktop-dependent integration tests: actually exercise ScreenCaptureKit/AVFoundation against a
+# real display/mic. Needs Screen Recording + Microphone permission granted locally to this app's
+# signing identity — not runnable in CI, so it's a separate scheme/target from `test` above.
+test-desktop:
+	xcodebuild -project $(PROJECT) -scheme RecRexDesktopTests -configuration $(CONFIGURATION) \
 		-destination 'platform=macOS' -derivedDataPath $(DERIVED_DATA) test
 
 clean:
