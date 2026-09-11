@@ -49,10 +49,15 @@ final class AppState: ObservableObject {
         isLoadingSources = true
         defer { isLoadingSources = false }
         do {
-            let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+            let content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: true)
             let ownBundleID = Bundle.main.bundleIdentifier
             availableDisplays = content.displays.map(DisplaySource.init)
             availableWindows = content.windows
+                // windowLayer == 0 is "a normal app window" — this excludes menu bar status
+                // items (battery, Wi-Fi, etc.), the Dock, and other system chrome that isn't a
+                // real app window someone would want to record.
+                .filter { $0.windowLayer == 0 }
+                .filter { $0.owningApplication != nil }
                 .filter { ($0.title?.isEmpty == false) }
                 .filter { $0.owningApplication?.bundleIdentifier != ownBundleID }
                 .map(WindowSource.init)

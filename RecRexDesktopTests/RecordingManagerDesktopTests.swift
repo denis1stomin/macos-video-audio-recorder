@@ -155,13 +155,15 @@ final class RecordingManagerDesktopTests: XCTestCase {
     }
 
     /// Picks a random capturable window, mirroring AppState.beginSourceSelection's own filtering
-    /// (has a title, isn't RecRex's own window) — a random pick rather than always "first" so
-    /// this exercises whatever window happens to be open locally instead of depending on a
-    /// specific one existing.
+    /// (a normal app window — not a menu bar item or the desktop, has a title, isn't RecRex's own
+    /// window) — a random pick rather than always "first" so this exercises whatever window
+    /// happens to be open locally instead of depending on a specific one existing.
     private func randomWindowSource() async throws -> WindowSource {
-        let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
+        let content = try await SCShareableContent.excludingDesktopWindows(true, onScreenWindowsOnly: true)
         let ownBundleID = Bundle.main.bundleIdentifier
         let candidates = content.windows
+            .filter { $0.windowLayer == 0 }
+            .filter { $0.owningApplication != nil }
             .filter { $0.title?.isEmpty == false }
             .filter { $0.owningApplication?.bundleIdentifier != ownBundleID }
         guard let window = candidates.randomElement() else {
