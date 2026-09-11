@@ -5,20 +5,20 @@ struct MainWindowView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 20) {
-            Text("RecRex")
-                .font(.largeTitle.bold())
+            HStack(spacing: 12) {
+                DinoBadge()
+                Text("RecRex")
+                    .font(.largeTitle.bold())
+            }
 
             Text("Choose what to record.")
                 .foregroundStyle(.secondary)
 
             VStack(alignment: .leading, spacing: 12) {
-                Toggle("Record video", isOn: $appState.recordVideo)
-                Toggle("Record system audio", isOn: $appState.recordSystemAudio)
-                Toggle("Record microphone", isOn: $appState.recordMicrophone)
+                RecordingOptionRow(title: "Record video", isOn: $appState.recordVideo)
+                RecordingOptionRow(title: "Record system audio", isOn: $appState.recordSystemAudio)
+                RecordingOptionRow(title: "Record microphone", isOn: $appState.recordMicrophone)
             }
-            .toggleStyle(.checkbox)
-
-            Spacer()
 
             HStack {
                 Spacer()
@@ -33,10 +33,27 @@ struct MainWindowView: View {
                     }
                 }
                 .keyboardShortcut(.defaultAction)
+                .buttonStyle(.borderedProminent)
                 .disabled(appState.isLoadingSources || !appState.recordVideo && !appState.recordSystemAudio && !appState.recordMicrophone)
             }
         }
         .padding(24)
-        .frame(width: 360, height: 280)
+        .frame(width: 360)
+        .dinoThemedBackground()
+    }
+}
+
+/// A toggle row with the switch on the left and its caption reading to the right of it.
+private struct RecordingOptionRow: View {
+    let title: String
+    @Binding var isOn: Bool
+
+    var body: some View {
+        HStack(spacing: 8) {
+            Toggle("", isOn: $isOn)
+                .toggleStyle(.switch)
+                .labelsHidden()
+            Text(title)
+        }
     }
 }

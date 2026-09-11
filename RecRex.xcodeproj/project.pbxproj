@@ -16,6 +16,7 @@
 		7D824046FFA0F86969ED07A3 /* SegmentSchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA195EF44FDA0386330AC6AE /* SegmentSchedulerTests.swift */; };
 		7EB769FB4FB4E9ABA57BDC8B /* RecRexApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131C1E1591E85F8E8DEDC865 /* RecRexApp.swift */; };
 		9B6C2ED24B9D9D3F073793C5 /* FileNamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82135AE757954C14A1468DE /* FileNamingTests.swift */; };
+		AC96822C2B69C0CC54419E3C /* DinoTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6A0490EE44797AFC48F90C /* DinoTheme.swift */; };
 		A07F295D71CCE79C749D9D72 /* CaptureModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5712EAA0261E43955CFACF7 /* CaptureModels.swift */; };
 		B499ACF43B7D6BC66761B8F4 /* PermissionsChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3736F26861A9A38041690CBD /* PermissionsChecker.swift */; };
 		BA0436975C0C59E6B1918A5E /* StartButtonLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3EC40A768DA4BFFAE415238 /* StartButtonLabel.swift */; };
@@ -42,6 +43,7 @@
 		131C1E1591E85F8E8DEDC865 /* RecRexApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecRexApp.swift; sourceTree = "<group>"; };
 		23B446B7D2108346D28A5896 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		3736F26861A9A38041690CBD /* PermissionsChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsChecker.swift; sourceTree = "<group>"; };
+		5C6A0490EE44797AFC48F90C /* DinoTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DinoTheme.swift; sourceTree = "<group>"; };
 		74B8396C42F95C280122A03F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7BBEAE5890CE3C5409003A24 /* SegmentScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentScheduler.swift; sourceTree = "<group>"; };
 		9FAE957EE188C6E638C4CCD4 /* RecRexTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecRexTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -62,6 +64,7 @@
 		1D44031B618EFC9B086CD564 /* Views */ = {
 			isa = PBXGroup;
 			children = (
+				5C6A0490EE44797AFC48F90C /* DinoTheme.swift */,
 				A4B777A22E0BB9BB92966368 /* MainWindowView.swift */,
 				C3B12E095C56220940C98B42 /* ProcessingWindowView.swift */,
 				23B446B7D2108346D28A5896 /* RootView.swift */,
@@ -249,6 +252,7 @@
 				FEB1C4B4676A66653D64E77D /* AppDelegate.swift in Sources */,
 				134518879E5BDAB75D7C6C10 /* AppState.swift in Sources */,
 				A07F295D71CCE79C749D9D72 /* CaptureModels.swift in Sources */,
+				AC96822C2B69C0CC54419E3C /* DinoTheme.swift in Sources */,
 				0FD4522774AECB7AC0F55C2A /* FileNaming.swift in Sources */,
 				BC9D92B580F88AD4E2F15387 /* MainWindowView.swift in Sources */,
 				B499ACF43B7D6BC66761B8F4 /* PermissionsChecker.swift in Sources */,

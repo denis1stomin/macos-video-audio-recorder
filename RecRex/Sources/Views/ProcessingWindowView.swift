@@ -31,10 +31,12 @@ struct ProcessingWindowView: View {
                     Task { await appState.stopRecording() }
                 }
                 .keyboardShortcut(.defaultAction)
+                .buttonStyle(.borderedProminent)
             }
         }
         .padding(32)
         .frame(width: 360, height: 260)
+        .dinoThemedBackground()
         .onReceive(timer) { now = $0 }
     }
 

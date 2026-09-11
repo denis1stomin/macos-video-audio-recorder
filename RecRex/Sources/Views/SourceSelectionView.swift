@@ -59,11 +59,13 @@ struct SourceSelectionView: View {
                     Task { await appState.startRecording() }
                 }
                 .keyboardShortcut(.defaultAction)
+                .buttonStyle(.borderedProminent)
                 .disabled(appState.selectedSource == nil)
             }
         }
         .padding(24)
         .frame(width: 560, height: 480)
+        .dinoThemedBackground()
     }
 }
 
