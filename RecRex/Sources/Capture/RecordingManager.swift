@@ -22,6 +22,11 @@ final class RecordingManager: NSObject, @unchecked Sendable {
     private var isPaused = false
     private var isRollingOverSegment = false
     private var savedFileURLs: [URL] = []
+    /// The exact pixel dimensions to encode video at, derived from the SCContentFilter's own
+    /// contentRect + pointPixelScale once it's built (see start()) — using the filter's actual
+    /// content size instead of guessing (e.g. assuming a fixed Retina 2x scale) is what keeps the
+    /// encoded frame exactly matching a window's real size, with no black letterboxing.
+    private(set) var videoPixelSize: (width: Int, height: Int) = (1920, 1080)
     private var hasLoggedFirstSample: [SCStreamOutputType: Bool] = [:]
     private var hasLoggedNotReady: [SCStreamOutputType: Bool] = [:]
     /// Where the current segment should end up once finished (in Downloads). We write to a
@@ -41,9 +46,11 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         baseFileName = FileNaming.baseFileName(for: Date())
         segmentIndex = 1
         savedFileURLs = []
-        queue.sync { try? beginSegmentWriter() }
 
-        guard settings.needsScreenCaptureKit else { return }
+        guard settings.needsScreenCaptureKit else {
+            queue.sync { try? beginSegmentWriter() }
+            return
+        }
 
         let content = try await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: true)
 
@@ -60,16 +67,26 @@ final class RecordingManager: NSObject, @unchecked Sendable {
             filter = SCContentFilter(display: display, excludingApplications: [], exceptingWindows: [])
         }
 
+        if settings.capturesVideo {
+            let scale = CGFloat(filter.pointPixelScale)
+            videoPixelSize = (
+                Self.evenPixelDimension(filter.contentRect.width * scale),
+                Self.evenPixelDimension(filter.contentRect.height * scale)
+            )
+        }
+        // The writer/encoder is set up only now, after videoPixelSize reflects the filter's real
+        // content size — beginSegmentWriter() (and any later rollover) reads that stored value.
+        queue.sync { try? beginSegmentWriter() }
+
         let config = SCStreamConfiguration()
         config.capturesAudio = settings.captureSystemAudio
         config.excludesCurrentProcessAudio = true
         config.captureMicrophone = settings.captureMicrophone
         config.showsCursor = true
         config.queueDepth = 8
-        let (width, height) = videoDimensions()
         if settings.capturesVideo {
-            config.width = width
-            config.height = height
+            config.width = videoPixelSize.width
+            config.height = videoPixelSize.height
         }
 
         let stream = SCStream(filter: filter, configuration: config, delegate: self)
@@ -84,7 +101,7 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         }
         try await stream.startCapture()
         self.stream = stream
-        logger.notice("Stream started: video=\(settings.capturesVideo) systemAudio=\(settings.captureSystemAudio) mic=\(settings.captureMicrophone) size=\(width)x\(height)")
+        logger.notice("Stream started: video=\(settings.capturesVideo) systemAudio=\(settings.captureSystemAudio) mic=\(settings.captureMicrophone) size=\(self.videoPixelSize.width)x\(self.videoPixelSize.height)")
     }
 
     func setPaused(_ paused: Bool) {
@@ -108,15 +125,12 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         return urls
     }
 
-    private func videoDimensions() -> (width: Int, height: Int) {
-        switch settings.videoSource {
-        case .display(let displaySource):
-            return (displaySource.display.width * 2, displaySource.display.height * 2)
-        case .window(let windowSource):
-            return (Int(windowSource.window.frame.width) * 2, Int(windowSource.window.frame.height) * 2)
-        case nil:
-            return (1920, 1080)
-        }
+    /// H.264 (with standard 4:2:0 chroma subsampling) requires even width/height, but a content
+    /// rect in points scaled by pointPixelScale can land on an odd pixel count — round to the
+    /// nearest even number rather than plain-rounding, so the encoder never has to pad itself.
+    private static func evenPixelDimension(_ value: CGFloat) -> Int {
+        let rounded = Int(value.rounded())
+        return rounded.isMultiple(of: 2) ? rounded : rounded + 1
     }
 
     private nonisolated(unsafe) static let audioSettings: [String: Any] = [
@@ -144,7 +158,7 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         let writer = try AVAssetWriter(outputURL: tempURL, fileType: .mp4)
 
         if settings.capturesVideo {
-            let (width, height) = videoDimensions()
+            let (width, height) = videoPixelSize
             let videoSettings: [String: Any] = [
                 AVVideoCodecKey: AVVideoCodecType.h264,
                 AVVideoWidthKey: width,

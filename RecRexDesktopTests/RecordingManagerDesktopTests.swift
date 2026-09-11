@@ -182,6 +182,9 @@ final class RecordingManagerDesktopTests: XCTestCase {
     ) async throws {
         let manager = RecordingManager()
         try await manager.start(settings: settings)
+        // Captured right after start(), once RecordingManager has derived it from the real
+        // SCContentFilter — this is the pixel size the encoder was actually configured for.
+        let expectedPixelSize = manager.videoPixelSize
         try await Task.sleep(nanoseconds: 3_000_000_000)
         let urls = await manager.stop()
 
@@ -207,10 +210,10 @@ final class RecordingManagerDesktopTests: XCTestCase {
             XCTAssertGreaterThan(duration.seconds, 0, "\(url.lastPathComponent) should have non-zero duration", file: file, line: line)
 
             let tracks = try await asset.load(.tracks)
-            let videoTrackCount = tracks.filter { $0.mediaType == .video }.count
+            let videoTracks = tracks.filter { $0.mediaType == .video }
             let audioTrackCount = tracks.filter { $0.mediaType == .audio }.count
             XCTAssertEqual(
-                videoTrackCount, expectedVideoTracks,
+                videoTracks.count, expectedVideoTracks,
                 "Unexpected video track count in \(url.lastPathComponent)",
                 file: file, line: line
             )
@@ -219,6 +222,24 @@ final class RecordingManagerDesktopTests: XCTestCase {
                 "Unexpected audio track count in \(url.lastPathComponent)",
                 file: file, line: line
             )
+
+            // The encoded frame must exactly match the real captured content's pixel size — a
+            // mismatch here (e.g. from guessing a fixed Retina scale instead of asking
+            // SCContentFilter for the real size) is what produces black letterboxing/pillarboxing
+            // around a window smaller than its screen.
+            if let videoTrack = videoTracks.first {
+                let naturalSize = try await videoTrack.load(.naturalSize)
+                XCTAssertEqual(
+                    Int(naturalSize.width), expectedPixelSize.width,
+                    "\(url.lastPathComponent) video width doesn't match the real captured content size — likely letterboxing",
+                    file: file, line: line
+                )
+                XCTAssertEqual(
+                    Int(naturalSize.height), expectedPixelSize.height,
+                    "\(url.lastPathComponent) video height doesn't match the real captured content size — likely letterboxing",
+                    file: file, line: line
+                )
+            }
         }
     }
 }
