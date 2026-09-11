@@ -8,14 +8,14 @@ APP_PATH := $(DERIVED_DATA)/Build/Products/$(CONFIGURATION)/RecRex.app
 
 build:
 	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration $(CONFIGURATION) \
-		-destination 'platform=macOS' -derivedDataPath $(DERIVED_DATA) CODE_SIGNING_ALLOWED=NO build
+		-destination 'platform=macOS' -derivedDataPath $(DERIVED_DATA) build
 
 run: build
 	open $(APP_PATH)
 
 test:
 	xcodebuild -project $(PROJECT) -scheme $(SCHEME) -configuration $(CONFIGURATION) \
-		-destination 'platform=macOS' -derivedDataPath $(DERIVED_DATA) CODE_SIGNING_ALLOWED=NO test
+		-destination 'platform=macOS' -derivedDataPath $(DERIVED_DATA) test
 
 clean:
 	rm -rf $(DERIVED_DATA)

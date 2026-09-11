@@ -16,8 +16,8 @@
 		7D824046FFA0F86969ED07A3 /* SegmentSchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA195EF44FDA0386330AC6AE /* SegmentSchedulerTests.swift */; };
 		7EB769FB4FB4E9ABA57BDC8B /* RecRexApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131C1E1591E85F8E8DEDC865 /* RecRexApp.swift */; };
 		9B6C2ED24B9D9D3F073793C5 /* FileNamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82135AE757954C14A1468DE /* FileNamingTests.swift */; };
-		AC96822C2B69C0CC54419E3C /* DinoTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6A0490EE44797AFC48F90C /* DinoTheme.swift */; };
 		A07F295D71CCE79C749D9D72 /* CaptureModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5712EAA0261E43955CFACF7 /* CaptureModels.swift */; };
+		AC96822C2B69C0CC54419E3C /* DinoTheme.swift in Sources */ = {isa = PBXBuildFile; fileRef = 5C6A0490EE44797AFC48F90C /* DinoTheme.swift */; };
 		B499ACF43B7D6BC66761B8F4 /* PermissionsChecker.swift in Sources */ = {isa = PBXBuildFile; fileRef = 3736F26861A9A38041690CBD /* PermissionsChecker.swift */; };
 		BA0436975C0C59E6B1918A5E /* StartButtonLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = F3EC40A768DA4BFFAE415238 /* StartButtonLabel.swift */; };
 		BC9D92B580F88AD4E2F15387 /* MainWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = A4B777A22E0BB9BB92966368 /* MainWindowView.swift */; };
@@ -455,6 +455,7 @@
 				CODE_SIGN_ENTITLEMENTS = RecRex/Resources/RecRex.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 4LWVFM737C;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = RecRex;
@@ -480,6 +481,7 @@
 				CODE_SIGN_ENTITLEMENTS = RecRex/Resources/RecRex.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
+				DEVELOPMENT_TEAM = 4LWVFM737C;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_CFBundleDisplayName = RecRex;
