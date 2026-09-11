@@ -9,6 +9,17 @@ struct SourceSelectionView: View {
 
     @ObservedObject var appState: AppState
     @State private var mode: Mode = .wholeScreen
+    // Remembers each tab's own last pick, so switching between "Whole screen" and "App window"
+    // and back doesn't lose your selection on the tab you're leaving.
+    @State private var selectedDisplay: DisplaySource?
+    @State private var selectedWindow: WindowSource?
+
+    init(appState: AppState) {
+        self.appState = appState
+        if case .display(let display) = appState.selectedSource {
+            _selectedDisplay = State(initialValue: display)
+        }
+    }
 
     var body: some View {
         VStack(alignment: .leading, spacing: 16) {
@@ -22,7 +33,14 @@ struct SourceSelectionView: View {
             .pickerStyle(.segmented)
             .labelsHidden()
             .controlSize(.large)
-            .onChange(of: mode) { _, _ in appState.selectedSource = nil }
+            .onChange(of: mode) { _, newMode in
+                switch newMode {
+                case .wholeScreen:
+                    appState.selectedSource = selectedDisplay.map { .display($0) }
+                case .appWindow:
+                    appState.selectedSource = selectedWindow.map { .window($0) }
+                }
+            }
 
             ScrollView {
                 LazyVGrid(columns: [GridItem(.adaptive(minimum: 208), spacing: 16)], spacing: 16) {
@@ -34,6 +52,7 @@ struct SourceSelectionView: View {
                                 isSelected: appState.selectedSource == .display(display),
                                 filter: SCContentFilter(display: display.display, excludingApplications: [], exceptingWindows: [])
                             ) {
+                                selectedDisplay = display
                                 appState.selectedSource = .display(display)
                             }
                         }
@@ -44,6 +63,7 @@ struct SourceSelectionView: View {
                                 isSelected: appState.selectedSource == .window(window),
                                 filter: SCContentFilter(desktopIndependentWindow: window.window)
                             ) {
+                                selectedWindow = window
                                 appState.selectedSource = .window(window)
                             }
                         }

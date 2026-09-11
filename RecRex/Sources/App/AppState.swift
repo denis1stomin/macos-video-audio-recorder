@@ -56,6 +56,9 @@ final class AppState: ObservableObject {
                 .filter { ($0.title?.isEmpty == false) }
                 .filter { $0.owningApplication?.bundleIdentifier != ownBundleID }
                 .map(WindowSource.init)
+            if let mainDisplay = availableDisplays.first(where: { $0.display.displayID == CGMainDisplayID() }) {
+                selectedSource = .display(mainDisplay)
+            }
             stage = .selectingSource
         } catch {
             permissionAlert = PermissionAlert(
