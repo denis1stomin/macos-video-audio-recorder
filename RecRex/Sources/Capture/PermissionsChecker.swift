@@ -17,7 +17,7 @@ enum PermissionsChecker {
                     + "enable RecRex, then try again."
             )
         }
-        if settings.captureMicrophone, !hasMicrophoneAccess() {
+        if settings.captureMicrophone, !(await hasMicrophoneAccess()) {
             return PermissionAlert(
                 title: "Microphone access needed",
                 message: "RecRex needs Microphone access to record your voice. "
@@ -32,7 +32,16 @@ enum PermissionsChecker {
         (try? await SCShareableContent.current) != nil
     }
 
-    private static func hasMicrophoneAccess() -> Bool {
-        AVCaptureDevice.authorizationStatus(for: .audio) == .authorized
+    private static func hasMicrophoneAccess() async -> Bool {
+        switch AVCaptureDevice.authorizationStatus(for: .audio) {
+        case .authorized:
+            return true
+        case .notDetermined:
+            return await AVCaptureDevice.requestAccess(for: .audio)
+        case .denied, .restricted:
+            return false
+        @unknown default:
+            return false
+        }
     }
 }
