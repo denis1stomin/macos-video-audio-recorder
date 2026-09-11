@@ -1,0 +1,61 @@
+# RecRex — Project Context
+
+## Goal
+Build a macOS tool to record screen and audio (system sound and/or microphone).
+
+## Status
+All planning decisions made. Starting implementation (v1 scaffolding).
+
+## Open decisions (not yet made)
+- Artifact hosting/distribution — leaning GitHub Releases (confirmed direction, not yet wired up)
+
+## Decision log
+- App type / language / SDK: **Native Swift app with a regular Dock icon** (SwiftUI/AppKit) — not a menu-bar-only background app; it shows in the Dock and Cmd+Tab switcher like a normal app. Uses ScreenCaptureKit/AVFoundation for capture. macOS's own built-in recording indicator (in the system menu bar) covers the "capture is active" signal — the app doesn't need its own menu bar icon.
+- v1 capture scope: **all combinations** of video, system audio, and microphone are supported, including audio-only recordings that mix system audio and microphone together.
+- Platform/format: target the **latest macOS** (current ScreenCaptureKit/AVFoundation APIs), output **MP4 (H.264)**.
+- Source control hosting: **GitHub** (already set up — `origin` is `git@github.com:denis1stomin/macos-video-audio-recorder.git`).
+- CI: **GitHub Actions** with a macOS runner, building (and later testing) on every push/PR.
+- Packaging: **universal binary** (arm64 + x86_64) in a single app bundle, so one download works on both Apple Silicon and Intel Macs.
+- Pause/resume: pausing stops **both video and audio** capture (no dead air or frozen-frame gap in the output), and the processing window shows a clear paused state (timer stops, button/label changes to indicate paused).
+- Icon: use a **simple SF Symbol placeholder** (e.g. a record/video-camera symbol) for both the app icon and menu bar item for now; real icon design deferred to later.
+- Video quality: **no user-facing quality picker in v1** — encode with a sane default (native display resolution, bitrate scaled to resolution/fps, standard H.264 profile) via hardware-accelerated VideoToolbox encoding, keeping the UX to the documented two-click flow. Can revisit as an optional advanced setting later if file size becomes a concern for long meetings.
+- Encoding approach: encode **on the fly** during capture (ScreenCaptureKit sample buffers → `AVAssetWriter` with hardware H.264 encoding via VideoToolbox), not raw-capture-then-postprocess — hardware encoding is low-overhead and runs in parallel with the video-meeting app's own CPU/GPU usage.
+- Permissions flow: if Screen Recording and/or Microphone permission is missing/denied, show a prompt that simply **notifies the user what's wrong and how to fix it** (i.e. points them to System Settings to grant the permission) — no attempt to auto-request or work around missing permissions beyond that notice.
+- System audio capture scope: when recording a **specific app window**, capture system audio only from that app (not all system sound), and always **exclude the recorder app's own audio output**. When recording the **whole screen**, capture all system audio (no single app to scope to). Microphone audio, when enabled, is captured **in addition to** whichever system audio is captured.
+- Mixing mic + system audio: kept as **separate audio tracks in the output container** (not mixed down to one track) — lets the user (or downstream editing tools) control/mute each source independently.
+- File naming: `Recording YYYY-MM-DDTHH-MM-SS.mp4` — ISO 8601 date/time (24-hour), with hyphens instead of colons since `:` is unsafe/reserved in macOS filenames. On a name collision in Downloads, append a Finder-style duplicate suffix before the extension: ` (2)`, ` (3)`, etc.
+- Multi-display selection: in "record whole screen" mode, show a preview thumbnail per connected display (same pattern as the per-app-window preview picker in the other mode) and let the user pick **one** display to record. No support for recording multiple displays at once/combined into a single output.
+- Captured window closes mid-recording (app crash or window closed) in per-window mode: **auto-stop and save** the recording as if Stop were pressed (save to Downloads, open Finder), then **reset the app back to the first window**, same as a normal stop.
+- General rule: **every path that ends a recording and saves a file** (manual Stop, or an auto-stop like the crashed/closed-window case above) must open the Downloads folder in Finder afterward — this isn't unique to the manual Stop button, it should apply consistently to any future auto-stop/error path too.
+- Long recordings: split output into **1.5-hour segments** (separate files), rolling over to a new file every 1.5 hours during a single recording session. Purpose is crash/power-loss resilience (an in-progress `AVAssetWriter` file can end up unplayable if the app dies mid-write) — encoding memory itself stays flat regardless of duration since samples stream straight to disk, so segmenting isn't a memory necessity, just a resilience/file-size tradeoff.
+- Code signing / notarization: **no Apple Developer ID for now** ($99/year, skipped) — ship unsigned (or ad-hoc signed) builds via GitHub Releases. Users will hit Gatekeeper warnings and need to right-click → Open (or clear the quarantine attribute) to run it. Revisit if/when distribution needs grow.
+- App Sandbox: **enabled**, for defense-in-depth and user trust (this app already asks for mic/screen access, so containing its filesystem reach matters) and to keep an App Store submission possible later without retrofitting. Use the `com.apple.security.files.downloads.read-write` entitlement for direct Downloads folder access (no file picker needed), and `com.apple.security.device.audio-input` for microphone access under sandbox. Screen Recording/Microphone TCC permission prompts are separate from sandboxing and are required either way. Sandbox entitlements are embeddable in an ad-hoc signature, so this is compatible with skipping the Developer ID.
+- Testing strategy: multiple test suites planned. For now, **CI (GitHub Actions) runs unit tests only** (logic that doesn't need real screen/mic capture — file naming, segment rollover timing, state machine for the recording flow, etc.). Capture-dependent testing (actually exercising ScreenCaptureKit/AVFoundation) should be possible to run **locally** even if not automated in CI yet. Deeper test strategy (what's covered locally vs. CI, any manual QA checklist) to be revisited once the app exists.
+- App name: **RecRex** (record + a little T-Rex mascot vibe) — short, no colliding app found in a search. Bundle identifier convention: reverse-DNS off the GitHub org, e.g. `dev.denis1stomin.recrex` (finalize exact reverse-DNS string when the Xcode project is created).
+
+### UX flow
+1. **First window** (shown on app launch) has three toggles/checkboxes:
+   - Record video
+   - Record system audio
+   - Record microphone
+   - Plus a start button whose caption depends on the video toggle:
+     - Video toggled ON → button reads **"Select video source"**
+     - Video toggled OFF → button reads **"Start recording only audio"**
+
+2. **Second window** (shown only when video recording is enabled, after clicking "Select video source") — choose the video source:
+   - Option A: **Record whole screen** — shows a screen selection preview
+   - Option B: **Record a specific app window** — shows app window previews
+   - Plus a "Start Recording" button to begin capture with the chosen source.
+
+3. **Recording starts**: the app window hides.
+   - If video is being recorded, macOS's own native screen-recording indicator takes over — the OS highlights/shows the window or screen being captured (standard system behavior, e.g. like ScreenCaptureKit's capture picker/indicator), no custom UI needed for this part.
+   - If audio-only, the app just hides with no visible capture indicator beyond the standard system recording indicator (menu bar icon macOS shows for any app using the mic/screen recording).
+
+4. **Clicking the app in the Dock while recording** opens a **processing window** showing:
+   - Short description of the settings applied (what's being recorded)
+   - A timer counting up from recording start
+   - **Pause** button — pauses recording
+   - **Stop** button — stops recording, saves the video to the **Downloads** folder, opens that folder in Finder, then returns the app to the very first window (as if just launched)
+
+## Notes
+- This file is the root context for the project — decisions, architecture direction, and constraints should be kept up to date here as the project progresses.
