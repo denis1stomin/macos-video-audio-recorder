@@ -14,6 +14,8 @@ jobs:
     runs-on: macos-26
     permissions:
       contents: write
+      id-token: write
+      attestations: write
 
     steps:
       - uses: actions/checkout@v5
@@ -52,6 +54,11 @@ jobs:
           ditto -c -k --sequesterRsrc --keepParent \
             "build/RecRex.xcarchive/Products/Applications/RecRex.app" \
             "RecRex-${{ steps.version.outputs.tag }}-macOS.zip"
+
+      - name: Attest build provenance
+        uses: actions/attest-build-provenance@v2
+        with:
+          subject-path: "RecRex-${{ steps.version.outputs.tag }}-macOS.zip"
 
       - name: Create GitHub Release
         env:
