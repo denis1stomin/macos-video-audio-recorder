@@ -1,5 +1,15 @@
 # RecRex — Release Notes
 
+## v0.9.0-rc.2 — Release pipeline hardening (release candidate)
+
+No functional/user-facing changes from rc.1 — this RC adds release engineering:
+- GitHub Releases distribution: `.github/workflows/release.yml` builds a universal, ad-hoc-signed binary and publishes it as a GitHub Release (prerelease, since the tag has a hyphen) whenever a `v*` tag is pushed.
+- CodeQL static analysis (`.github/workflows/codeql.yml`) running on every push/PR to `main` plus a weekly schedule.
+- The release zip now carries a build provenance attestation (verify with `gh attestation verify`), so a downloader can confirm it was built by this repo's own public workflow from the tagged commit.
+
+### Known limitations
+Same as rc.1 below — still no notarization, no user-facing video quality settings, and not yet verified end-to-end against a real meeting or on actual CI runs.
+
 ## v0.9.0-rc.1 — Initial scaffold (release candidate)
 
 First working build of RecRex, a native macOS app for recording video meetings (screen, system audio, and/or microphone).
