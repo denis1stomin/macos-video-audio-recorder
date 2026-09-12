@@ -45,9 +45,13 @@ Most screen recorders either bury the feature inside a bloated all-in-one app, r
 - macOS with current [ScreenCaptureKit](https://developer.apple.com/documentation/screencapturekit)/AVFoundation support (targets the latest macOS SDK)
 - Screen Recording and (if used) Microphone permission, granted via System Settings → Privacy & Security — RecRex will tell you exactly what's missing if a permission isn't granted
 
+## Download
+
+Prebuilt universal binaries (Apple Silicon + Intel) are published on the [Releases](https://github.com/denis1stomin/recrex/releases) page. RecRex isn't signed with an Apple Developer ID yet (see [`CLAUDE.md`](CLAUDE.md) for why), so Gatekeeper will block the unzipped app on first launch — right-click `RecRex.app` → **Open** → **Open** to run it anyway; you only need to do this once.
+
 ## Building from source
 
-RecRex isn't distributed as a signed, notarized build yet (no Apple Developer Program membership — see [`CLAUDE.md`](CLAUDE.md) for the reasoning), so for now the best way to run it is to build it yourself:
+Prefer to build it yourself instead:
 
 ```sh
 git clone git@github.com:denis1stomin/recrex.git

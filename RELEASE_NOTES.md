@@ -1,6 +1,6 @@
 # RecRex — Release Notes
 
-## v0.1.0 — Initial scaffold (unreleased)
+## v0.9.0-rc.1 — Initial scaffold (release candidate)
 
 First working build of RecRex, a native macOS app for recording video meetings (screen, system audio, and/or microphone).
 

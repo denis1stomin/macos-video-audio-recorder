@@ -1,0 +1,64 @@
+name: Release
+
+on:
+  push:
+    tags: ['v*']
+  workflow_dispatch:
+    inputs:
+      tag:
+        description: 'Existing tag to build and release (e.g. v0.1.0-rc.1)'
+        required: true
+
+jobs:
+  build-and-release:
+    runs-on: macos-26
+    permissions:
+      contents: write
+
+    steps:
+      - uses: actions/checkout@v5
+        with:
+          ref: ${{ inputs.tag || github.ref }}
+
+      - name: Select Xcode
+        run: sudo xcode-select -s /Applications/Xcode.app
+
+      - name: Determine version
+        id: version
+        run: |
+          TAG="${{ inputs.tag || github.ref_name }}"
+          echo "tag=$TAG" >> "$GITHUB_OUTPUT"
+          if [[ "$TAG" == *-* ]]; then
+            echo "prerelease=true" >> "$GITHUB_OUTPUT"
+          else
+            echo "prerelease=false" >> "$GITHUB_OUTPUT"
+          fi
+
+      - name: Archive (universal binary, ad-hoc signed)
+        run: |
+          xcodebuild -project RecRex.xcodeproj -scheme RecRex -configuration Release \
+            -destination 'generic/platform=macOS' \
+            -archivePath build/RecRex.xcarchive \
+            CODE_SIGN_IDENTITY="-" CODE_SIGN_STYLE=Manual \
+            CODE_SIGNING_REQUIRED=YES CODE_SIGNING_ALLOWED=YES \
+            archive
+
+      - name: Verify universal binary
+        run: |
+          lipo -info "build/RecRex.xcarchive/Products/Applications/RecRex.app/Contents/MacOS/RecRex"
+
+      - name: Package
+        run: |
+          ditto -c -k --sequesterRsrc --keepParent \
+            "build/RecRex.xcarchive/Products/Applications/RecRex.app" \
+            "RecRex-${{ steps.version.outputs.tag }}-macOS.zip"
+
+      - name: Create GitHub Release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          gh release create "${{ steps.version.outputs.tag }}" \
+            "RecRex-${{ steps.version.outputs.tag }}-macOS.zip" \
+            --title "${{ steps.version.outputs.tag }}" \
+            --generate-notes \
+            --prerelease="${{ steps.version.outputs.prerelease }}"
