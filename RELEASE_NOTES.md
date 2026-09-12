@@ -14,11 +14,10 @@ First working build of RecRex, a native macOS app for recording video meetings (
 - Missing Screen Recording or Microphone permission shows a message pointing to System Settings, rather than failing silently.
 - App Sandbox enabled, scoped to Downloads read/write and microphone access.
 - Universal binary (Apple Silicon + Intel), targeting the latest macOS.
-- Placeholder app icon and unit tests for the pure logic (file naming, segment scheduling, button labeling).
+- Finalized app icon, and unit tests for the pure logic (file naming, segment scheduling, button labeling).
 - GitHub Actions workflow that builds the app and runs the unit test suite on every push/PR.
 
 ### Known limitations
 - Not yet distributed with a signed/notarized build — running it will trigger a Gatekeeper warning until an Apple Developer ID is added later.
 - No user-facing video quality settings yet; capture uses sane hardware-encoded defaults.
 - Not yet verified end-to-end against a real meeting (Zoom/Google Meet/etc.) or on GitHub Actions CI.
-- App icon is a placeholder; final icon design is still open.
