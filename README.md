@@ -3,6 +3,7 @@
 **A native macOS app for recording your screen, system audio, and microphone — built for capturing video meetings, demos, and tutorials without any third-party service in the loop.**
 
 [![Build and Test](https://github.com/denis1stomin/recrex/actions/workflows/build.yml/badge.svg)](https://github.com/denis1stomin/recrex/actions/workflows/build.yml)
+[![CodeQL](https://github.com/denis1stomin/recrex/actions/workflows/codeql.yml/badge.svg)](https://github.com/denis1stomin/recrex/actions/workflows/codeql.yml)
 [![Platform: macOS](https://img.shields.io/badge/platform-macOS-lightgrey)](https://www.apple.com/macos/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg)](LICENSE)
 [![Swift](https://img.shields.io/badge/Swift-SwiftUI%20%2B%20AVFoundation-orange)](https://developer.apple.com/swift/)
