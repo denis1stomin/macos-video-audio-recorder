@@ -11,6 +11,10 @@ final class RecordingManager: NSObject, @unchecked Sendable {
     private let queue = DispatchQueue(label: "dev.denis1stomin.recrex.capture")
 
     private var stream: SCStream?
+    /// Kept so a detected content-size change (see handleContentResize) can push an updated
+    /// width/height to the live stream via SCStream.updateConfiguration, instead of only affecting
+    /// the next segment's encoder settings.
+    private var streamConfiguration: SCStreamConfiguration?
     private var assetWriter: AVAssetWriter?
     private var videoInput: AVAssetWriterInput?
     private var systemAudioInput: AVAssetWriterInput?
@@ -28,7 +32,11 @@ final class RecordingManager: NSObject, @unchecked Sendable {
     /// encoded aspect ratio matching a window's real shape, with no black letterboxing — and then
     /// capped to maxVideoDimension on the longer edge (a meeting recording doesn't need native 5K/6K
     /// pixels; ScreenCaptureKit itself does the downscaling via SCStreamConfiguration.width/height,
-    /// so this never costs an extra resample pass).
+    /// so this never costs an extra resample pass). In window-recording mode this can also change
+    /// mid-recording — see handleContentResize — when the captured window itself resizes (e.g. a
+    /// video inside it goes fullscreen); without reacting to that, ScreenCaptureKit keeps delivering
+    /// frames sized to the stale dimensions, and the new, differently-scaled content only fills part
+    /// of that frame, leaving the rest black.
     private(set) var videoPixelSize: (width: Int, height: Int) = (1920, 1080)
     private var hasLoggedFirstSample: [SCStreamOutputType: Bool] = [:]
     private var hasLoggedNotReady: [SCStreamOutputType: Bool] = [:]
@@ -96,6 +104,7 @@ final class RecordingManager: NSObject, @unchecked Sendable {
             // recordings from ballooning in size; a talking-head screen share doesn't need more.
             config.minimumFrameInterval = CMTime(value: 1, timescale: Int32(Self.videoFrameRate))
         }
+        streamConfiguration = config
 
         let stream = SCStream(filter: filter, configuration: config, delegate: self)
         if settings.capturesVideo {
@@ -121,6 +130,7 @@ final class RecordingManager: NSObject, @unchecked Sendable {
             try? await stream.stopCapture()
         }
         stream = nil
+        streamConfiguration = nil
         await finishCurrentSegment()
         let urls = queue.sync { savedFileURLs }
         guard !discard else {
@@ -154,6 +164,28 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         return (
             evenPixelDimension(CGFloat(width) * scale),
             evenPixelDimension(CGFloat(height) * scale)
+        )
+    }
+
+    /// The actual pixel size of a frame's real content, as ScreenCaptureKit reports it per-frame —
+    /// contentRect (in points) is the portion of the fixed-size frame buffer that holds real
+    /// content, and contentScale converts that to pixels. In window-recording mode this can differ
+    /// from the dimensions the encoder was configured with (see handleContentResize) once the
+    /// captured window itself resizes after recording started (e.g. a video inside it goes
+    /// fullscreen) — ScreenCaptureKit keeps delivering frames sized to the stale configured
+    /// dimensions regardless, so the new, differently-scaled content only fills part of that frame,
+    /// leaving the rest black.
+    private static func currentContentPixelSize(from sampleBuffer: CMSampleBuffer) -> (width: Int, height: Int)? {
+        guard let attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, createIfNecessary: false) as? [[SCStreamFrameInfo: Any]],
+            let attachments = attachmentsArray.first,
+            let contentRectDict = attachments[.contentRect] as? [CFString: Any],
+            let contentRect = CGRect(dictionaryRepresentation: contentRectDict as CFDictionary),
+            let contentScale = attachments[.contentScale] as? CGFloat else {
+            return nil
+        }
+        return (
+            evenPixelDimension(contentRect.width * contentScale),
+            evenPixelDimension(contentRect.height * contentScale)
         )
     }
 
@@ -276,6 +308,23 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         }
     }
 
+    /// Must be called on `queue`. Reacts to the captured window's real content changing size
+    /// mid-recording (see currentContentPixelSize) by pushing the new size to the live stream —
+    /// so future frames arrive correctly scaled instead of padded with black — and rolling over to
+    /// a new segment, since an AVAssetWriterInput's dimensions are fixed once created.
+    private func handleContentResize(to newSize: (width: Int, height: Int)) {
+        logger.notice("Captured content resized from \(self.videoPixelSize.width)x\(self.videoPixelSize.height) to \(newSize.width)x\(newSize.height) — rolling over to a new segment")
+        videoPixelSize = newSize
+        if let streamConfiguration, let stream {
+            streamConfiguration.width = newSize.width
+            streamConfiguration.height = newSize.height
+            Task {
+                try? await stream.updateConfiguration(streamConfiguration)
+            }
+        }
+        rollOverToNextSegment()
+    }
+
     /// Must be called on `queue`.
     private func rollOverToNextSegment() {
         guard !isRollingOverSegment else { return }
@@ -342,6 +391,9 @@ extension RecordingManager: SCStreamOutput {
                 // no real pixel data — feeding one into the H.264 hardware encoder can fail the
                 // whole writer with an opaque VideoToolbox error. Only encode .complete frames.
                 guard isCompleteVideoFrame(sampleBuffer) else { return }
+                if let currentSize = Self.currentContentPixelSize(from: sampleBuffer), currentSize != videoPixelSize {
+                    handleContentResize(to: currentSize)
+                }
                 if let videoInput, videoInput.isReadyForMoreMediaData {
                     videoInput.append(sampleBuffer)
                 } else if hasLoggedNotReady[type] != true {
