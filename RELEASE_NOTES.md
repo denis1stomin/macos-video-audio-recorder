@@ -8,6 +8,16 @@ Product issues reported from real-world use, not yet fixed:
 - **Black bars around shrunk video content after the captured window resizes (window-recording mode only).** Recording a specific app window, then something inside it goes fullscreen (e.g. a video player), or the window is manually resized — the encoded video used to keep the dimensions locked in at recording start, so the new, differently-sized content only filled part of the frame, with the rest black. **Fixed, not yet re-verified:** `RecordingManager` now polls the OS every 1.5s for the recorded window's actual current size and, once a change is confirmed across a couple of polls, starts a new, correctly-sized segment instead.
 - **Echo when recording system audio + microphone together.** The mixed system-audio and microphone tracks produce audible echo — likely the microphone acoustically picking up the meeting app's own audio output (system audio) when not using headphones. **Next step (pending):** test whether the echo still happens with headphones on. If it disappears, it confirms acoustic feedback and the fix is acoustic echo cancellation on the microphone path — but that's real engineering work, not a quick tweak: ScreenCaptureKit's own mic capture (`SCStream` + `captureMicrophone`, what we use today) has no AEC option at all, so it'd mean switching mic capture to `AVAudioEngine` with `inputNode.setVoiceProcessingEnabled(true)`, which is known to be finicky on macOS (unpredictable channel-count changes, and can fail outright when input/output devices don't match, e.g. built-in mic + external speakers or AirPods) and would need a second capture pipeline kept in sync with the existing `SCStream`-driven `AVAssetWriter` session. If the echo persists even with headphones, AEC won't fix it — the cause would be something else (e.g. the meeting app itself duplicating audio into both the mic and system-audio streams) and needs separate investigation.
 
+## v0.9.1-rc.1 — Rename, video quality fixes (release candidate)
+
+- App renamed from RecRex to **RexGrab** (bundle ID now `dev.denis1stomin.rexgrab`); if you installed an earlier RecRex build, its Screen Recording/Microphone permissions are separate and won't carry over automatically.
+- Video quality defaults tightened after real-world testing surfaced a ~2.4 GB/70-minute full-screen recording: resolution capped at 1920px on the longer edge (true 1080p, not the ~600p-equivalent an earlier build briefly shipped due to a units mix-up), 30fps cap, H.264 High profile, mono 64 kbps AAC audio.
+- Window-recording resize fix (specific-app-window mode): the encoder now polls the OS for the window's real current size and rolls over to a correctly-sized segment when it changes, instead of leaving black bars around shrunk content. Not yet re-verified against a real repro.
+- Echo when mixing system audio + microphone is still open — investigation notes only, no fix yet (see Known issues below).
+
+### Known limitations
+Same as rc.2/rc.1 below — still no notarization, no user-facing video quality picker, and the resize fix above hasn't been re-verified against a live repro.
+
 ## v0.9.0-rc.2 — Release pipeline hardening (release candidate)
 
 No functional/user-facing changes from rc.1 — this RC adds release engineering:
