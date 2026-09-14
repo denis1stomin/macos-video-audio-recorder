@@ -49,7 +49,7 @@ struct ProcessingWindowView: View {
             .padding(.top, 8)
         }
         .padding(32)
-        .frame(width: RecRexWindowSize.width)
+        .frame(width: RexGrabWindowSize.width)
         .dinoThemedBackground()
         .onReceive(timer) { now = $0 }
         .confirmationDialog(

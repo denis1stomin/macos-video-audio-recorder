@@ -1,5 +1,5 @@
 import XCTest
-@testable import RecRex
+@testable import RexGrab
 
 final class SegmentSchedulerTests: XCTestCase {
     func testDoesNotRollOverBeforeDurationElapsed() {

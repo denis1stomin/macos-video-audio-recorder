@@ -38,34 +38,34 @@ jobs:
 
       - name: Archive (universal binary, ad-hoc signed)
         run: |
-          xcodebuild -project RecRex.xcodeproj -scheme RecRex -configuration Release \
+          xcodebuild -project RexGrab.xcodeproj -scheme RexGrab -configuration Release \
             -destination 'generic/platform=macOS' \
-            -archivePath build/RecRex.xcarchive \
+            -archivePath build/RexGrab.xcarchive \
             CODE_SIGN_IDENTITY="-" CODE_SIGN_STYLE=Manual \
             CODE_SIGNING_REQUIRED=YES CODE_SIGNING_ALLOWED=YES \
             archive
 
       - name: Verify universal binary
         run: |
-          lipo -info "build/RecRex.xcarchive/Products/Applications/RecRex.app/Contents/MacOS/RecRex"
+          lipo -info "build/RexGrab.xcarchive/Products/Applications/RexGrab.app/Contents/MacOS/RexGrab"
 
       - name: Package
         run: |
           ditto -c -k --sequesterRsrc --keepParent \
-            "build/RecRex.xcarchive/Products/Applications/RecRex.app" \
-            "RecRex-${{ steps.version.outputs.tag }}-macOS.zip"
+            "build/RexGrab.xcarchive/Products/Applications/RexGrab.app" \
+            "RexGrab-${{ steps.version.outputs.tag }}-macOS.zip"
 
       - name: Attest build provenance
         uses: actions/attest-build-provenance@v2
         with:
-          subject-path: "RecRex-${{ steps.version.outputs.tag }}-macOS.zip"
+          subject-path: "RexGrab-${{ steps.version.outputs.tag }}-macOS.zip"
 
       - name: Create GitHub Release
         env:
           GH_TOKEN: ${{ github.token }}
         run: |
           gh release create "${{ steps.version.outputs.tag }}" \
-            "RecRex-${{ steps.version.outputs.tag }}-macOS.zip" \
+            "RexGrab-${{ steps.version.outputs.tag }}-macOS.zip" \
             --title "${{ steps.version.outputs.tag }}" \
             --generate-notes \
             --prerelease="${{ steps.version.outputs.prerelease }}"

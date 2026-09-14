@@ -7,8 +7,8 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         case noShareableContentFound
     }
 
-    private let logger = Logger(subsystem: "dev.denis1stomin.recrex", category: "capture")
-    private let queue = DispatchQueue(label: "dev.denis1stomin.recrex.capture")
+    private let logger = Logger(subsystem: "dev.denis1stomin.rexgrab", category: "capture")
+    private let queue = DispatchQueue(label: "dev.denis1stomin.rexgrab.capture")
 
     private var stream: SCStream?
     /// Kept so a detected content-size change (see handleContentResize) can push an updated

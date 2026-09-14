@@ -15,9 +15,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "C8F9D18CABFDE087E9A21D42"
-               BuildableName = "RecRex.app"
-               BlueprintName = "RecRex"
-               ReferencedContainer = "container:RecRex.xcodeproj">
+               BuildableName = "RexGrab.app"
+               BlueprintName = "RexGrab"
+               ReferencedContainer = "container:RexGrab.xcodeproj">
             </BuildableReference>
          </BuildActionEntry>
       </BuildActionEntries>
@@ -33,9 +33,9 @@
             <BuildableReference
                BuildableIdentifier = "primary"
                BlueprintIdentifier = "B78CDAB13A1CDA81213B5EC7"
-               BuildableName = "RecRexDesktopTests.xctest"
-               BlueprintName = "RecRexDesktopTests"
-               ReferencedContainer = "container:RecRex.xcodeproj">
+               BuildableName = "RexGrabDesktopTests.xctest"
+               BlueprintName = "RexGrabDesktopTests"
+               ReferencedContainer = "container:RexGrab.xcodeproj">
             </BuildableReference>
          </TestableReference>
       </Testables>

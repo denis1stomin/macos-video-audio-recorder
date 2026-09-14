@@ -26,7 +26,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         return true
     }
 
-    /// Switching to RecRex via Cmd+Tab activates the app but, unlike a Dock click, doesn't call
+    /// Switching to RexGrab via Cmd+Tab activates the app but, unlike a Dock click, doesn't call
     /// `applicationShouldHandleReopen` — so without this, Cmd+Tab during recording would bring
     /// the app to the foreground with no window to show (the window is hidden while recording).
     func applicationDidBecomeActive(_ notification: Notification) {
@@ -52,7 +52,7 @@ final class AppDelegate: NSObject, NSApplicationDelegate, NSWindowDelegate {
         }
         let hostingController = NSHostingController(rootView: RootView(appState: appState))
         let newWindow = NSWindow(contentViewController: hostingController)
-        newWindow.title = "RecRex"
+        newWindow.title = "RexGrab"
         newWindow.styleMask = [.titled, .closable, .miniaturizable]
         newWindow.isReleasedWhenClosed = false
         newWindow.delegate = self

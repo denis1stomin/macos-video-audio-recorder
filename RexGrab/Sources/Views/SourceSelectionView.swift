@@ -19,7 +19,7 @@ struct SourceSelectionView: View {
         if case .display(let display) = appState.selectedSource {
             _selectedDisplay = State(initialValue: display)
         }
-        // ScreenCaptureKit returns windows front-to-back, so after filtering out RecRex's own
+        // ScreenCaptureKit returns windows front-to-back, so after filtering out RexGrab's own
         // window this is simply "whatever window you were just looking at" — a much more
         // reliable default than guessing by app name or launch time.
         _selectedWindow = State(initialValue: appState.availableWindows.first)
@@ -91,7 +91,7 @@ struct SourceSelectionView: View {
             }
         }
         .padding(24)
-        .frame(width: RecRexWindowSize.width, height: 500)
+        .frame(width: RexGrabWindowSize.width, height: 500)
         .dinoThemedBackground()
     }
 }

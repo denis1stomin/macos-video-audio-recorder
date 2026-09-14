@@ -4,7 +4,7 @@ import SwiftUI
 /// so the window doesn't visibly jump side-to-side as the app moves between them. Height is left
 /// for each window to size to its own content — forcing all three to the same height left the
 /// shorter windows surrounded by large, empty padding.
-enum RecRexWindowSize {
+enum RexGrabWindowSize {
     static let width: CGFloat = 560
 }
 

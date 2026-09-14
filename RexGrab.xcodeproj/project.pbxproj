@@ -15,7 +15,7 @@
 		48D97AD684519B0D1599C36A /* StartButtonLabelTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = AD96F23E09A7DA81489D1ABB /* StartButtonLabelTests.swift */; };
 		5BB4CE666D9A977EF915FE35 /* ProcessingWindowView.swift in Sources */ = {isa = PBXBuildFile; fileRef = C3B12E095C56220940C98B42 /* ProcessingWindowView.swift */; };
 		7D824046FFA0F86969ED07A3 /* SegmentSchedulerTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = CA195EF44FDA0386330AC6AE /* SegmentSchedulerTests.swift */; };
-		7EB769FB4FB4E9ABA57BDC8B /* RecRexApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131C1E1591E85F8E8DEDC865 /* RecRexApp.swift */; };
+		7EB769FB4FB4E9ABA57BDC8B /* RexGrabApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 131C1E1591E85F8E8DEDC865 /* RexGrabApp.swift */; };
 		819AEC44C9B799864DD548AA /* RecordingManagerDesktopTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = B5E4F1EEDFCF399A60D8D944 /* RecordingManagerDesktopTests.swift */; };
 		9B6C2ED24B9D9D3F073793C5 /* FileNamingTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = E82135AE757954C14A1468DE /* FileNamingTests.swift */; };
 		A07F295D71CCE79C749D9D72 /* CaptureModels.swift in Sources */ = {isa = PBXBuildFile; fileRef = E5712EAA0261E43955CFACF7 /* CaptureModels.swift */; };
@@ -35,29 +35,29 @@
 			containerPortal = A33B76BE8587FBF17A8667D5 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = C8F9D18CABFDE087E9A21D42;
-			remoteInfo = RecRex;
+			remoteInfo = RexGrab;
 		};
 		CD6C64FC8E80962582784902 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = A33B76BE8587FBF17A8667D5 /* Project object */;
 			proxyType = 1;
 			remoteGlobalIDString = C8F9D18CABFDE087E9A21D42;
-			remoteInfo = RecRex;
+			remoteInfo = RexGrab;
 		};
 /* End PBXContainerItemProxy section */
 
 /* Begin PBXFileReference section */
 		018BB1464B268C84534C807D /* AppState.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppState.swift; sourceTree = "<group>"; };
 		06822781BEBA46A4ADC06B67 /* FileNaming.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNaming.swift; sourceTree = "<group>"; };
-		098BAF841AC505DF53C01308 /* RecRexDesktopTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecRexDesktopTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
-		131C1E1591E85F8E8DEDC865 /* RecRexApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RecRexApp.swift; sourceTree = "<group>"; };
+		098BAF841AC505DF53C01308 /* RexGrabDesktopTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RexGrabDesktopTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		131C1E1591E85F8E8DEDC865 /* RexGrabApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RexGrabApp.swift; sourceTree = "<group>"; };
 		23B446B7D2108346D28A5896 /* RootView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RootView.swift; sourceTree = "<group>"; };
 		3736F26861A9A38041690CBD /* PermissionsChecker.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = PermissionsChecker.swift; sourceTree = "<group>"; };
 		583CD4CD81EC0F1F02DD3636 /* Cocoa.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = Cocoa.framework; path = Platforms/MacOSX.platform/Developer/SDKs/MacOSX26.0.sdk/System/Library/Frameworks/Cocoa.framework; sourceTree = DEVELOPER_DIR; };
 		5C6A0490EE44797AFC48F90C /* DinoTheme.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DinoTheme.swift; sourceTree = "<group>"; };
 		74B8396C42F95C280122A03F /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7BBEAE5890CE3C5409003A24 /* SegmentScheduler.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SegmentScheduler.swift; sourceTree = "<group>"; };
-		9FAE957EE188C6E638C4CCD4 /* RecRexUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RecRexUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
+		9FAE957EE188C6E638C4CCD4 /* RexGrabUnitTests.xctest */ = {isa = PBXFileReference; explicitFileType = wrapper.cfbundle; includeInIndex = 0; path = RexGrabUnitTests.xctest; sourceTree = BUILT_PRODUCTS_DIR; };
 		A4B777A22E0BB9BB92966368 /* MainWindowView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MainWindowView.swift; sourceTree = "<group>"; };
 		AD96F23E09A7DA81489D1ABB /* StartButtonLabelTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartButtonLabelTests.swift; sourceTree = "<group>"; };
 		B5E4F1EEDFCF399A60D8D944 /* RecordingManagerDesktopTests.swift */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = sourcecode.swift; path = RecordingManagerDesktopTests.swift; sourceTree = "<group>"; };
@@ -69,7 +69,7 @@
 		E82135AE757954C14A1468DE /* FileNamingTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FileNamingTests.swift; sourceTree = "<group>"; };
 		EA0FDDD2C1BB035C42E6D661 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		F3EC40A768DA4BFFAE415238 /* StartButtonLabel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = StartButtonLabel.swift; sourceTree = "<group>"; };
-		F571656BED6DA0666796D57D /* RecRex.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RecRex.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		F571656BED6DA0666796D57D /* RexGrab.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = RexGrab.app; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -126,21 +126,21 @@
 		792E427C6A17A92E56428E3E = {
 			isa = PBXGroup;
 			children = (
-				A87B5FEA35D485FE07C2EBDC /* RecRex */,
-				D4DE961D29AD9B2F2D28D8CE /* RecRexUnitTests */,
+				A87B5FEA35D485FE07C2EBDC /* RexGrab */,
+				D4DE961D29AD9B2F2D28D8CE /* RexGrabUnitTests */,
 				8485257DE84A8C9EF29A45F0 /* Products */,
 				779AB4461386AAE808D236CE /* Frameworks */,
-				7971C4BC5AA3E4FB4F98A694 /* RecRexDesktopTests */,
+				7971C4BC5AA3E4FB4F98A694 /* RexGrabDesktopTests */,
 			);
 			sourceTree = "<group>";
 		};
-		7971C4BC5AA3E4FB4F98A694 /* RecRexDesktopTests */ = {
+		7971C4BC5AA3E4FB4F98A694 /* RexGrabDesktopTests */ = {
 			isa = PBXGroup;
 			children = (
 				B5E4F1EEDFCF399A60D8D944 /* RecordingManagerDesktopTests.swift */,
 			);
-			name = RecRexDesktopTests;
-			path = RecRexDesktopTests;
+			name = RexGrabDesktopTests;
+			path = RexGrabDesktopTests;
 			sourceTree = "<group>";
 		};
 		83D30D2A0760070E5C90CF1B /* Capture */ = {
@@ -156,9 +156,9 @@
 		8485257DE84A8C9EF29A45F0 /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				F571656BED6DA0666796D57D /* RecRex.app */,
-				9FAE957EE188C6E638C4CCD4 /* RecRexUnitTests.xctest */,
-				098BAF841AC505DF53C01308 /* RecRexDesktopTests.xctest */,
+				F571656BED6DA0666796D57D /* RexGrab.app */,
+				9FAE957EE188C6E638C4CCD4 /* RexGrabUnitTests.xctest */,
+				098BAF841AC505DF53C01308 /* RexGrabDesktopTests.xctest */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -168,18 +168,18 @@
 			children = (
 				EA0FDDD2C1BB035C42E6D661 /* AppDelegate.swift */,
 				018BB1464B268C84534C807D /* AppState.swift */,
-				131C1E1591E85F8E8DEDC865 /* RecRexApp.swift */,
+				131C1E1591E85F8E8DEDC865 /* RexGrabApp.swift */,
 			);
 			path = App;
 			sourceTree = "<group>";
 		};
-		A87B5FEA35D485FE07C2EBDC /* RecRex */ = {
+		A87B5FEA35D485FE07C2EBDC /* RexGrab */ = {
 			isa = PBXGroup;
 			children = (
 				34CF22EBC4D8A4609E579F2A /* Resources */,
 				5F7F2902E96AB70432DE7B24 /* Sources */,
 			);
-			path = RecRex;
+			path = RexGrab;
 			sourceTree = "<group>";
 		};
 		B0F5A053444DC138B8B2B77B /* OS X */ = {
@@ -190,15 +190,15 @@
 			name = "OS X";
 			sourceTree = "<group>";
 		};
-		D4DE961D29AD9B2F2D28D8CE /* RecRexUnitTests */ = {
+		D4DE961D29AD9B2F2D28D8CE /* RexGrabUnitTests */ = {
 			isa = PBXGroup;
 			children = (
 				E82135AE757954C14A1468DE /* FileNamingTests.swift */,
 				CA195EF44FDA0386330AC6AE /* SegmentSchedulerTests.swift */,
 				AD96F23E09A7DA81489D1ABB /* StartButtonLabelTests.swift */,
 			);
-			name = RecRexUnitTests;
-			path = RecRexUnitTests;
+			name = RexGrabUnitTests;
+			path = RexGrabUnitTests;
 			sourceTree = "<group>";
 		};
 		F1F66CD798E11BAD5F54C5C1 /* Support */ = {
@@ -214,9 +214,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		84866493EFF52186EA40653E /* RecRexUnitTests */ = {
+		84866493EFF52186EA40653E /* RexGrabUnitTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = B134BA855364A741F5D15A74 /* Build configuration list for PBXNativeTarget "RecRexUnitTests" */;
+			buildConfigurationList = B134BA855364A741F5D15A74 /* Build configuration list for PBXNativeTarget "RexGrabUnitTests" */;
 			buildPhases = (
 				5AEFDF080748758FE51C06BD /* Sources */,
 			);
@@ -225,14 +225,14 @@
 			dependencies = (
 				A0BCF2C7D4594837FC5235B8 /* PBXTargetDependency */,
 			);
-			name = RecRexUnitTests;
-			productName = RecRexUnitTests;
-			productReference = 9FAE957EE188C6E638C4CCD4 /* RecRexUnitTests.xctest */;
+			name = RexGrabUnitTests;
+			productName = RexGrabUnitTests;
+			productReference = 9FAE957EE188C6E638C4CCD4 /* RexGrabUnitTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		B78CDAB13A1CDA81213B5EC7 /* RecRexDesktopTests */ = {
+		B78CDAB13A1CDA81213B5EC7 /* RexGrabDesktopTests */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = DB23D85883B5ED50B3E14ECB /* Build configuration list for PBXNativeTarget "RecRexDesktopTests" */;
+			buildConfigurationList = DB23D85883B5ED50B3E14ECB /* Build configuration list for PBXNativeTarget "RexGrabDesktopTests" */;
 			buildPhases = (
 				E11EDEE92E08B231A7FBF832 /* Sources */,
 				DF72317B0920BD0091C13491 /* Frameworks */,
@@ -243,14 +243,14 @@
 			dependencies = (
 				DD0E4A0E33E6BAA54A53BCD2 /* PBXTargetDependency */,
 			);
-			name = RecRexDesktopTests;
-			productName = RecRexDesktopTests;
-			productReference = 098BAF841AC505DF53C01308 /* RecRexDesktopTests.xctest */;
+			name = RexGrabDesktopTests;
+			productName = RexGrabDesktopTests;
+			productReference = 098BAF841AC505DF53C01308 /* RexGrabDesktopTests.xctest */;
 			productType = "com.apple.product-type.bundle.unit-test";
 		};
-		C8F9D18CABFDE087E9A21D42 /* RecRex */ = {
+		C8F9D18CABFDE087E9A21D42 /* RexGrab */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = A2EE2F8F8878A3A46C067348 /* Build configuration list for PBXNativeTarget "RecRex" */;
+			buildConfigurationList = A2EE2F8F8878A3A46C067348 /* Build configuration list for PBXNativeTarget "RexGrab" */;
 			buildPhases = (
 				08E17BCA453915B18540A04B /* Sources */,
 				0B816AD94E338EF852DD1383 /* Resources */,
@@ -259,9 +259,9 @@
 			);
 			dependencies = (
 			);
-			name = RecRex;
-			productName = RecRex;
-			productReference = F571656BED6DA0666796D57D /* RecRex.app */;
+			name = RexGrab;
+			productName = RexGrab;
+			productReference = F571656BED6DA0666796D57D /* RexGrab.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -279,7 +279,7 @@
 					};
 				};
 			};
-			buildConfigurationList = 0EE0E3E648CF7AF1C7DA50A4 /* Build configuration list for PBXProject "RecRex" */;
+			buildConfigurationList = 0EE0E3E648CF7AF1C7DA50A4 /* Build configuration list for PBXProject "RexGrab" */;
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -293,9 +293,9 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				C8F9D18CABFDE087E9A21D42 /* RecRex */,
-				84866493EFF52186EA40653E /* RecRexUnitTests */,
-				B78CDAB13A1CDA81213B5EC7 /* RecRexDesktopTests */,
+				C8F9D18CABFDE087E9A21D42 /* RexGrab */,
+				84866493EFF52186EA40653E /* RexGrabUnitTests */,
+				B78CDAB13A1CDA81213B5EC7 /* RexGrabDesktopTests */,
 			);
 		};
 /* End PBXProject section */
@@ -331,7 +331,7 @@
 				BC9D92B580F88AD4E2F15387 /* MainWindowView.swift in Sources */,
 				B499ACF43B7D6BC66761B8F4 /* PermissionsChecker.swift in Sources */,
 				5BB4CE666D9A977EF915FE35 /* ProcessingWindowView.swift in Sources */,
-				7EB769FB4FB4E9ABA57BDC8B /* RecRexApp.swift in Sources */,
+				7EB769FB4FB4E9ABA57BDC8B /* RexGrabApp.swift in Sources */,
 				0538F1376C22D060F1F0C552 /* RecordingManager.swift in Sources */,
 				4599A411FD3089149CFF1376 /* RootView.swift in Sources */,
 				FBDD6E8A30593EF5F15F6400 /* SegmentScheduler.swift in Sources */,
@@ -363,13 +363,13 @@
 /* Begin PBXTargetDependency section */
 		A0BCF2C7D4594837FC5235B8 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			target = C8F9D18CABFDE087E9A21D42 /* RecRex */;
+			target = C8F9D18CABFDE087E9A21D42 /* RexGrab */;
 			targetProxy = CD6C64FC8E80962582784902 /* PBXContainerItemProxy */;
 		};
 		DD0E4A0E33E6BAA54A53BCD2 /* PBXTargetDependency */ = {
 			isa = PBXTargetDependency;
-			name = RecRex;
-			target = C8F9D18CABFDE087E9A21D42 /* RecRex */;
+			name = RexGrab;
+			target = C8F9D18CABFDE087E9A21D42 /* RexGrab */;
 			targetProxy = 1C913D961EF75A595F2218FF /* PBXContainerItemProxy */;
 		};
 /* End PBXTargetDependency section */
@@ -389,10 +389,10 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.recrex.desktoptests;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.rexgrab.desktoptests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RecRex.app/Contents/MacOS/RecRex";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RexGrab.app/Contents/MacOS/RexGrab";
 			};
 			name = Release;
 		};
@@ -475,9 +475,9 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.recrex.unittests;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.rexgrab.unittests;
 				SDKROOT = macosx;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RecRex.app/Contents/MacOS/RecRex";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RexGrab.app/Contents/MacOS/RexGrab";
 			};
 			name = Debug;
 		};
@@ -554,9 +554,9 @@
 					"@executable_path/../Frameworks",
 					"@loader_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.recrex.unittests;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.rexgrab.unittests;
 				SDKROOT = macosx;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RecRex.app/Contents/MacOS/RecRex";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RexGrab.app/Contents/MacOS/RexGrab";
 			};
 			name = Release;
 		};
@@ -565,23 +565,23 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = RecRex/Resources/RecRex.entitlements;
+				CODE_SIGN_ENTITLEMENTS = RexGrab/Resources/RexGrab.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 4LWVFM737C;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = RecRex;
+				INFOPLIST_KEY_CFBundleDisplayName = RexGrab;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Denis Istomin.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "RecRex needs microphone access to include your voice in recordings when microphone capture is enabled.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "RexGrab needs microphone access to include your voice in recordings when microphone capture is enabled.";
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.recrex;
-				PRODUCT_NAME = RecRex;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.rexgrab;
+				PRODUCT_NAME = RexGrab;
 				SDKROOT = macosx;
 			};
 			name = Debug;
@@ -600,10 +600,10 @@
 					"@loader_path/../Frameworks",
 				);
 				MACOSX_DEPLOYMENT_TARGET = 26.0;
-				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.recrex.desktoptests;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.rexgrab.desktoptests;
 				SDKROOT = macosx;
 				SWIFT_VERSION = 6.0;
-				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RecRex.app/Contents/MacOS/RecRex";
+				TEST_HOST = "$(BUILT_PRODUCTS_DIR)/RexGrab.app/Contents/MacOS/RexGrab";
 			};
 			name = Debug;
 		};
@@ -612,23 +612,23 @@
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
-				CODE_SIGN_ENTITLEMENTS = RecRex/Resources/RecRex.entitlements;
+				CODE_SIGN_ENTITLEMENTS = RexGrab/Resources/RexGrab.entitlements;
 				CODE_SIGN_STYLE = Automatic;
 				COMBINE_HIDPI_IMAGES = YES;
 				DEVELOPMENT_TEAM = 4LWVFM737C;
 				ENABLE_HARDENED_RUNTIME = YES;
 				GENERATE_INFOPLIST_FILE = YES;
-				INFOPLIST_KEY_CFBundleDisplayName = RecRex;
+				INFOPLIST_KEY_CFBundleDisplayName = RexGrab;
 				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.productivity";
 				INFOPLIST_KEY_NSHumanReadableCopyright = "Copyright © 2026 Denis Istomin.";
-				INFOPLIST_KEY_NSMicrophoneUsageDescription = "RecRex needs microphone access to include your voice in recordings when microphone capture is enabled.";
+				INFOPLIST_KEY_NSMicrophoneUsageDescription = "RexGrab needs microphone access to include your voice in recordings when microphone capture is enabled.";
 				INFOPLIST_KEY_NSPrincipalClass = NSApplication;
 				LD_RUNPATH_SEARCH_PATHS = (
 					"$(inherited)",
 					"@executable_path/../Frameworks",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.recrex;
-				PRODUCT_NAME = RecRex;
+				PRODUCT_BUNDLE_IDENTIFIER = dev.denis1stomin.rexgrab;
+				PRODUCT_NAME = RexGrab;
 				SDKROOT = macosx;
 			};
 			name = Release;
@@ -636,7 +636,7 @@
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		0EE0E3E648CF7AF1C7DA50A4 /* Build configuration list for PBXProject "RecRex" */ = {
+		0EE0E3E648CF7AF1C7DA50A4 /* Build configuration list for PBXProject "RexGrab" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				38FD7C2A05FB92659EBE56E4 /* Debug */,
@@ -645,7 +645,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		A2EE2F8F8878A3A46C067348 /* Build configuration list for PBXNativeTarget "RecRex" */ = {
+		A2EE2F8F8878A3A46C067348 /* Build configuration list for PBXNativeTarget "RexGrab" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				E9987B81F29BEA5DD62D93E9 /* Debug */,
@@ -654,7 +654,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		B134BA855364A741F5D15A74 /* Build configuration list for PBXNativeTarget "RecRexUnitTests" */ = {
+		B134BA855364A741F5D15A74 /* Build configuration list for PBXNativeTarget "RexGrabUnitTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				62E04789345F1F97894F1827 /* Debug */,
@@ -663,7 +663,7 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Debug;
 		};
-		DB23D85883B5ED50B3E14ECB /* Build configuration list for PBXNativeTarget "RecRexDesktopTests" */ = {
+		DB23D85883B5ED50B3E14ECB /* Build configuration list for PBXNativeTarget "RexGrabDesktopTests" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				1C20FFCE7E2062C34F987825 /* Release */,

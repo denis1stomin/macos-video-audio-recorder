@@ -28,7 +28,7 @@ jobs:
 
       - name: Build
         run: |
-          xcodebuild -project RecRex.xcodeproj -scheme RecRex -configuration Debug \
+          xcodebuild -project RexGrab.xcodeproj -scheme RexGrab -configuration Debug \
             -destination 'platform=macOS' CODE_SIGNING_ALLOWED=NO build
 
       - name: Perform CodeQL Analysis

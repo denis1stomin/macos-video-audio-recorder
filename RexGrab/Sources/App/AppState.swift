@@ -68,9 +68,9 @@ final class AppState: ObservableObject {
         } catch {
             permissionAlert = PermissionAlert(
                 title: "Screen Recording access needed",
-                message: "RecRex needs Screen Recording access to list screens and windows. "
+                message: "RexGrab needs Screen Recording access to list screens and windows. "
                     + "Open System Settings \u{2192} Privacy & Security \u{2192} Screen Recording, "
-                    + "enable RecRex, then try again."
+                    + "enable RexGrab, then try again."
             )
         }
     }
@@ -99,7 +99,7 @@ final class AppState: ObservableObject {
             isPaused = false
             stage = .recording
             // In window-source mode, bring the app being captured to the front — otherwise the
-            // user is left staring at whatever was behind RecRex's own (now-hidden) window
+            // user is left staring at whatever was behind RexGrab's own (now-hidden) window
             // instead of the thing they're actually recording.
             if case .window(let windowSource) = settings.videoSource,
                 let pid = windowSource.window.owningApplication?.processID {

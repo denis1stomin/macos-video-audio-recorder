@@ -1,7 +1,7 @@
 import AVFoundation
 import ScreenCaptureKit
 import XCTest
-@testable import RecRex
+@testable import RexGrab
 
 /// Exercises RecordingManager against the real ScreenCaptureKit/AVFoundation stack — actually
 /// capturing a few seconds of real screen/system-audio/microphone content and asserting on the
@@ -15,7 +15,7 @@ import XCTest
 ///
 /// This needs real Screen Recording (and, for mic tests, Microphone) permission granted to
 /// whatever signing identity built this test bundle, so it only runs locally via
-/// `make test-desktop` (or the RecRexDesktopTests scheme in Xcode) — never in CI, which has no
+/// `make test-desktop` (or the RexGrabDesktopTests scheme in Xcode) — never in CI, which has no
 /// way to grant that permission on a headless runner.
 final class RecordingManagerDesktopTests: XCTestCase {
     func testVideoOnly() async throws {
@@ -155,7 +155,7 @@ final class RecordingManagerDesktopTests: XCTestCase {
     }
 
     /// Picks a random capturable window, mirroring AppState.beginSourceSelection's own filtering
-    /// (a normal app window — not a menu bar item or the desktop, has a title, isn't RecRex's own
+    /// (a normal app window — not a menu bar item or the desktop, has a title, isn't RexGrab's own
     /// window) — a random pick rather than always "first" so this exercises whatever window
     /// happens to be open locally instead of depending on a specific one existing.
     private func randomWindowSource() async throws -> WindowSource {

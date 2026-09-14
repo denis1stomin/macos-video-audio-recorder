@@ -1,4 +1,4 @@
-# RecRex — Release Notes
+# RexGrab — Release Notes
 
 ## Known issues
 
@@ -20,7 +20,7 @@ Same as rc.1 below — still no notarization, no user-facing video quality setti
 
 ## v0.9.0-rc.1 — Initial scaffold (release candidate)
 
-First working build of RecRex, a native macOS app for recording video meetings (screen, system audio, and/or microphone).
+First working build of RexGrab, a native macOS app for recording video meetings (screen, system audio, and/or microphone).
 
 ### Included
 - SwiftUI app with the full three-stage window flow: choose what to record → choose a video source (whole screen or a specific app window, with live thumbnails) → recording/processing window with a live timer, pause, and stop.

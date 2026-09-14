@@ -7,7 +7,7 @@ struct MainWindowView: View {
         VStack(alignment: .leading, spacing: 20) {
             HStack(spacing: 12) {
                 DinoBadge()
-                Text("RecRex")
+                Text("RexGrab")
                     .font(.largeTitle.bold())
             }
 
@@ -42,7 +42,7 @@ struct MainWindowView: View {
             .padding(.top, 8)
         }
         .padding(32)
-        .frame(width: RecRexWindowSize.width)
+        .frame(width: RexGrabWindowSize.width)
         .dinoThemedBackground()
     }
 }

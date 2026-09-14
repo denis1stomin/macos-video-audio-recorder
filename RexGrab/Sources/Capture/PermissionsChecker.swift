@@ -12,17 +12,17 @@ enum PermissionsChecker {
         if settings.needsScreenCaptureKit, !(await hasScreenRecordingAccess()) {
             return PermissionAlert(
                 title: "Screen Recording access needed",
-                message: "RecRex needs Screen Recording access to capture video or system audio. "
+                message: "RexGrab needs Screen Recording access to capture video or system audio. "
                     + "Open System Settings \u{2192} Privacy & Security \u{2192} Screen Recording, "
-                    + "enable RecRex, then try again."
+                    + "enable RexGrab, then try again."
             )
         }
         if settings.captureMicrophone, !(await hasMicrophoneAccess()) {
             return PermissionAlert(
                 title: "Microphone access needed",
-                message: "RecRex needs Microphone access to record your voice. "
+                message: "RexGrab needs Microphone access to record your voice. "
                     + "Open System Settings \u{2192} Privacy & Security \u{2192} Microphone, "
-                    + "enable RecRex, then try again."
+                    + "enable RexGrab, then try again."
             )
         }
         return nil
