@@ -77,7 +77,7 @@ make clean   # remove build artifacts
 ## Output format
 
 - **Container:** MP4
-- **Video:** H.264, hardware-encoded, capped at 1080px on the longer edge and 30fps, bitrate left to VideoToolbox's own content-adaptive default (an explicit target was tried and made static screen content look blurry — see `RELEASE_NOTES.md`)
+- **Video:** H.264, hardware-encoded, capped at 1920px on the longer edge (real 1080p for a standard 16:9 screen) and 30fps, bitrate left to VideoToolbox's own content-adaptive default
 - **Audio:** system audio and microphone as separate mono AAC tracks (when both are enabled), 64 kbps each — plenty for speech
 - **Filename:** `Recording YYYY-MM-DDTHH-MM-SS.mp4`, saved to `~/Downloads`
 

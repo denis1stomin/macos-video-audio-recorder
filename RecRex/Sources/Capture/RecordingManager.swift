@@ -173,7 +173,13 @@ final class RecordingManager: NSObject, @unchecked Sendable {
 
     /// A meeting recording doesn't need native 5K/6K pixels — cap the longer edge and scale the
     /// other proportionally so aspect ratio (and therefore no letterboxing) is preserved.
-    private static let maxVideoDimension = 1080
+    ///
+    /// This caps the *longer* edge (width, for typical landscape recordings) — 1080 here does NOT
+    /// mean "1080p": for a 16:9 screen it lands at roughly 1080x608 (~600p-equivalent, a third of
+    /// 1080p's real pixel count), which is what actually caused the persistent blurry-video reports
+    /// this session — no bitrate tweak could fix a genuinely too-small frame. 1920 here gives real
+    /// 1920x1080 for a standard 16:9 screen, which is what "1080p" actually refers to.
+    private static let maxVideoDimension = 1920
 
     /// A hard floor below which a pollForWindowResize reading is rejected outright as garbage
     /// rather than ever treated as a real resize — no legitimate captured window content should be
