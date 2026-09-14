@@ -203,10 +203,17 @@ final class RecordingManager: NSObject, @unchecked Sendable {
     /// 70-minute full-screen recording, before this and the resolution/frame-rate caps above)
     /// growing unbounded on a high-resolution display. Clamped so a tiny recorded window doesn't
     /// starve for bits and a max-size capture doesn't run away either.
+    ///
+    /// An earlier, much lower value here (0.06 bpp, 1.5–8 Mbps clamp) was found — by real
+    /// recording, not just math — to produce visibly blurry text: at 1080x592 it targeted 1.5 Mbps,
+    /// but VideoToolbox's rate control actually only spent ~518 kbps on that mostly-static screen
+    /// content (its "average bitrate" is a soft target it can undershoot considerably, not a floor
+    /// it fills). Raised well above what the math alone would suggest is needed, specifically to
+    /// leave headroom for that undershoot.
     private static func averageVideoBitRate(width: Int, height: Int) -> Int {
-        let bitsPerPixelPerFrame = 0.06
+        let bitsPerPixelPerFrame = 0.15
         let raw = Double(width * height) * videoFrameRate * bitsPerPixelPerFrame
-        return min(max(Int(raw.rounded()), 1_500_000), 8_000_000)
+        return min(max(Int(raw.rounded()), 3_000_000), 10_000_000)
     }
 
     /// Mono at 64 kbps AAC is plenty for a meeting's speech content — halves the audio bitrate
