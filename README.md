@@ -76,8 +76,8 @@ make clean   # remove build artifacts
 ## Output format
 
 - **Container:** MP4
-- **Video:** H.264, hardware-encoded, native display resolution
-- **Audio:** system audio and microphone as separate AAC tracks (when both are enabled)
+- **Video:** H.264, hardware-encoded, capped at 1080px on the longer edge and 30fps, ~1.5–8 Mbps depending on resolution
+- **Audio:** system audio and microphone as separate mono AAC tracks (when both are enabled), 64 kbps each — plenty for speech
 - **Filename:** `Recording YYYY-MM-DDTHH-MM-SS.mp4`, saved to `~/Downloads`
 
 ## Project status

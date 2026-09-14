@@ -168,11 +168,15 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         return min(max(Int(raw.rounded()), 1_500_000), 8_000_000)
     }
 
+    /// Mono at 64 kbps AAC is plenty for a meeting's speech content — halves the audio bitrate
+    /// from the original 128 kbps/stereo, and putting all those bits into one channel instead of
+    /// splitting them across two keeps quality closer to transparent than stereo at the same
+    /// total bitrate would.
     private nonisolated(unsafe) static let audioSettings: [String: Any] = [
         AVFormatIDKey: kAudioFormatMPEG4AAC,
-        AVNumberOfChannelsKey: 2,
+        AVNumberOfChannelsKey: 1,
         AVSampleRateKey: 44_100,
-        AVEncoderBitRateKey: 128_000,
+        AVEncoderBitRateKey: 64_000,
     ]
 
     /// Must be called on `queue`.
