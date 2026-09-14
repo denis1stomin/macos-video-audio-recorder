@@ -22,10 +22,13 @@ final class RecordingManager: NSObject, @unchecked Sendable {
     private var isPaused = false
     private var isRollingOverSegment = false
     private var savedFileURLs: [URL] = []
-    /// The exact pixel dimensions to encode video at, derived from the SCContentFilter's own
+    /// The exact pixel dimensions to encode video at: derived from the SCContentFilter's own
     /// contentRect + pointPixelScale once it's built (see start()) — using the filter's actual
     /// content size instead of guessing (e.g. assuming a fixed Retina 2x scale) is what keeps the
-    /// encoded frame exactly matching a window's real size, with no black letterboxing.
+    /// encoded aspect ratio matching a window's real shape, with no black letterboxing — and then
+    /// capped to maxVideoDimension on the longer edge (a meeting recording doesn't need native 5K/6K
+    /// pixels; ScreenCaptureKit itself does the downscaling via SCStreamConfiguration.width/height,
+    /// so this never costs an extra resample pass).
     private(set) var videoPixelSize: (width: Int, height: Int) = (1920, 1080)
     private var hasLoggedFirstSample: [SCStreamOutputType: Bool] = [:]
     private var hasLoggedNotReady: [SCStreamOutputType: Bool] = [:]
@@ -69,9 +72,9 @@ final class RecordingManager: NSObject, @unchecked Sendable {
 
         if settings.capturesVideo {
             let scale = CGFloat(filter.pointPixelScale)
-            videoPixelSize = (
-                Self.evenPixelDimension(filter.contentRect.width * scale),
-                Self.evenPixelDimension(filter.contentRect.height * scale)
+            videoPixelSize = Self.downscaledIfNeeded(
+                width: Self.evenPixelDimension(filter.contentRect.width * scale),
+                height: Self.evenPixelDimension(filter.contentRect.height * scale)
             )
         }
         // The writer/encoder is set up only now, after videoPixelSize reflects the filter's real
@@ -87,6 +90,11 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         if settings.capturesVideo {
             config.width = videoPixelSize.width
             config.height = videoPixelSize.height
+            // ScreenCaptureKit otherwise delivers frames at the display's own refresh rate (up to
+            // 120Hz on ProMotion) regardless of on-screen motion — capping it is one of the two
+            // main levers (with the explicit video bitrate below) for keeping long meeting
+            // recordings from ballooning in size; a talking-head screen share doesn't need more.
+            config.minimumFrameInterval = CMTime(value: 1, timescale: Int32(Self.videoFrameRate))
         }
 
         let stream = SCStream(filter: filter, configuration: config, delegate: self)
@@ -133,6 +141,33 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         return rounded.isMultiple(of: 2) ? rounded : rounded + 1
     }
 
+    private static let videoFrameRate: Double = 30
+
+    /// A meeting recording doesn't need native 5K/6K pixels — cap the longer edge and scale the
+    /// other proportionally so aspect ratio (and therefore no letterboxing) is preserved.
+    private static let maxVideoDimension = 1080
+
+    private static func downscaledIfNeeded(width: Int, height: Int) -> (width: Int, height: Int) {
+        let longestEdge = max(width, height)
+        guard longestEdge > maxVideoDimension else { return (width, height) }
+        let scale = CGFloat(maxVideoDimension) / CGFloat(longestEdge)
+        return (
+            evenPixelDimension(CGFloat(width) * scale),
+            evenPixelDimension(CGFloat(height) * scale)
+        )
+    }
+
+    /// A rough screen-content H.264 target (bits per pixel per frame) — enough to keep UI text
+    /// legible without VideoToolbox's own uncapped default (observed to produce ~2.4 GB for a
+    /// 70-minute full-screen recording, before this and the resolution/frame-rate caps above)
+    /// growing unbounded on a high-resolution display. Clamped so a tiny recorded window doesn't
+    /// starve for bits and a max-size capture doesn't run away either.
+    private static func averageVideoBitRate(width: Int, height: Int) -> Int {
+        let bitsPerPixelPerFrame = 0.06
+        let raw = Double(width * height) * videoFrameRate * bitsPerPixelPerFrame
+        return min(max(Int(raw.rounded()), 1_500_000), 8_000_000)
+    }
+
     private nonisolated(unsafe) static let audioSettings: [String: Any] = [
         AVFormatIDKey: kAudioFormatMPEG4AAC,
         AVNumberOfChannelsKey: 2,
@@ -163,6 +198,11 @@ final class RecordingManager: NSObject, @unchecked Sendable {
                 AVVideoCodecKey: AVVideoCodecType.h264,
                 AVVideoWidthKey: width,
                 AVVideoHeightKey: height,
+                AVVideoCompressionPropertiesKey: [
+                    AVVideoAverageBitRateKey: Self.averageVideoBitRate(width: width, height: height),
+                    AVVideoExpectedSourceFrameRateKey: Int(Self.videoFrameRate),
+                    AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
+                ],
             ]
             let input = AVAssetWriterInput(mediaType: .video, outputSettings: videoSettings)
             input.expectsMediaDataInRealTime = true

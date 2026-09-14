@@ -1,5 +1,12 @@
 # RecRex — Release Notes
 
+## Known issues
+
+Product issues reported from real-world use, not yet fixed:
+
+- **Large output file size.** A ~1h10m full-screen recording at the original fixed encoding settings (native display resolution, VideoToolbox's own automatic bitrate) came out to ~2.4 GB — good quality, but too big for easy sharing/storage over long sessions. **Mitigated, not yet re-verified:** the default encoding settings were tightened — resolution capped at 1080px on the longer edge, frame rate capped at 30fps, and an explicit ~0.06 bits/pixel/frame video bitrate (clamped 1.5–8 Mbps) — but this hasn't been validated yet against a real recording for the resulting file size/quality trade-off. Still no user-facing quality picker (e.g. High / Medium / "Optimized").
+- **Echo when recording system audio + microphone together.** The mixed system-audio and microphone tracks produce audible echo — likely the microphone acoustically picking up the meeting app's own audio output (system audio) when not using headphones. Planned fix: investigate acoustic echo cancellation for the microphone capture path (e.g. `AVAudioEngine`'s voice-processing I/O).
+
 ## v0.9.0-rc.2 — Release pipeline hardening (release candidate)
 
 No functional/user-facing changes from rc.1 — this RC adds release engineering:
