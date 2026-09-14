@@ -15,6 +15,11 @@ final class RecordingManager: NSObject, @unchecked Sendable {
     /// width/height to the live stream via SCStream.updateConfiguration, instead of only affecting
     /// the next segment's encoder settings.
     private var streamConfiguration: SCStreamConfiguration?
+    /// Set in start() for window-recording mode; identifies which window pollForWindowResize
+    /// should keep re-checking. Window-only — a display's pixel size doesn't change mid-recording,
+    /// so whole-screen mode never starts the polling task at all.
+    private var recordedWindowID: CGWindowID?
+    private var resizePollingTask: Task<Void, Never>?
     private var assetWriter: AVAssetWriter?
     private var videoInput: AVAssetWriterInput?
     private var systemAudioInput: AVAssetWriterInput?
@@ -38,13 +43,11 @@ final class RecordingManager: NSObject, @unchecked Sendable {
     /// frames sized to the stale dimensions, and the new, differently-scaled content only fills part
     /// of that frame, leaving the rest black.
     private(set) var videoPixelSize: (width: Int, height: Int) = (1920, 1080)
-    /// A candidate new size from currentContentPixelSize, and how many consecutive frames have
-    /// reported it — see handleContentResize. The frames right after a stream/segment
-    /// reconfiguration can report transient, noisy contentRect/contentScale values (observed once
-    /// as a single bad frame cascading three back-to-back rollovers down to a crashing 0x0 "resize");
-    /// requiring the same size to repeat for pendingResizeThreshold frames before acting filters
-    /// that out, since real noise isn't self-consistent across consecutive frames.
-    private var pendingResize: (size: (width: Int, height: Int), consecutiveFrames: Int)?
+    /// A candidate new size from pollForWindowResize, and how many consecutive polls have reported
+    /// it — see handleContentResize. Requiring the same size to repeat for resizePollConfirmations
+    /// polls before acting filters out a one-off bad reading (e.g. a window mid-drag, not yet
+    /// settled) rather than reacting to it immediately.
+    private var pendingResize: (size: (width: Int, height: Int), consecutivePolls: Int)?
     private var hasLoggedFirstSample: [SCStreamOutputType: Bool] = [:]
     private var hasLoggedNotReady: [SCStreamOutputType: Bool] = [:]
     /// Where the current segment should end up once finished (in Downloads). We write to a
@@ -76,6 +79,7 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         switch settings.videoSource {
         case .window(let windowSource):
             filter = SCContentFilter(desktopIndependentWindow: windowSource.window)
+            recordedWindowID = windowSource.window.windowID
         case .display(let displaySource):
             filter = SCContentFilter(display: displaySource.display, excludingApplications: [], exceptingWindows: [])
         case nil:
@@ -126,6 +130,10 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         try await stream.startCapture()
         self.stream = stream
         logger.notice("Stream started: video=\(settings.capturesVideo) systemAudio=\(settings.captureSystemAudio) mic=\(settings.captureMicrophone) size=\(self.videoPixelSize.width)x\(self.videoPixelSize.height)")
+
+        if recordedWindowID != nil, settings.capturesVideo {
+            startResizePolling()
+        }
     }
 
     func setPaused(_ paused: Bool) {
@@ -133,6 +141,9 @@ final class RecordingManager: NSObject, @unchecked Sendable {
     }
 
     func stop(discard: Bool = false) async -> [URL] {
+        resizePollingTask?.cancel()
+        resizePollingTask = nil
+        recordedWindowID = nil
         if let stream {
             try? await stream.stopCapture()
         }
@@ -164,15 +175,18 @@ final class RecordingManager: NSObject, @unchecked Sendable {
     /// other proportionally so aspect ratio (and therefore no letterboxing) is preserved.
     private static let maxVideoDimension = 1080
 
-    /// A hard floor below which a currentContentPixelSize reading is rejected outright as garbage
+    /// A hard floor below which a pollForWindowResize reading is rejected outright as garbage
     /// rather than ever treated as a real resize — no legitimate captured window content should be
-    /// this small, but a transient bad frame reading a near-zero contentRect has been observed, and
-    /// unconditionally acting on it crashed AVAssetWriter with a 0x0 video size.
+    /// this small, and unconditionally acting on a bad reading has previously crashed AVAssetWriter
+    /// with a 0x0 video size.
     private static let minimumContentDimension = 64
 
-    /// How many consecutive frames must agree on the same new size before handleContentResize
-    /// commits to it — filters out single-frame noise from a genuine, stable resize.
-    private static let pendingResizeThreshold = 10
+    /// How often pollForWindowResize re-checks the recorded window's real size.
+    private static let resizePollInterval: UInt64 = 1_500_000_000
+
+    /// How many consecutive polls must agree on the same new size before handleContentResize
+    /// commits to it — filters out a one-off bad reading (e.g. mid-drag, not yet settled).
+    private static let resizePollConfirmations = 2
 
     private static func downscaledIfNeeded(width: Int, height: Int) -> (width: Int, height: Int) {
         let longestEdge = max(width, height)
@@ -181,28 +195,6 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         return (
             evenPixelDimension(CGFloat(width) * scale),
             evenPixelDimension(CGFloat(height) * scale)
-        )
-    }
-
-    /// The actual pixel size of a frame's real content, as ScreenCaptureKit reports it per-frame —
-    /// contentRect (in points) is the portion of the fixed-size frame buffer that holds real
-    /// content, and contentScale converts that to pixels. In window-recording mode this can differ
-    /// from the dimensions the encoder was configured with (see handleContentResize) once the
-    /// captured window itself resizes after recording started (e.g. a video inside it goes
-    /// fullscreen) — ScreenCaptureKit keeps delivering frames sized to the stale configured
-    /// dimensions regardless, so the new, differently-scaled content only fills part of that frame,
-    /// leaving the rest black.
-    private static func currentContentPixelSize(from sampleBuffer: CMSampleBuffer) -> (width: Int, height: Int)? {
-        guard let attachmentsArray = CMSampleBufferGetSampleAttachmentsArray(sampleBuffer, createIfNecessary: false) as? [[SCStreamFrameInfo: Any]],
-            let attachments = attachmentsArray.first,
-            let contentRectDict = attachments[.contentRect] as? [CFString: Any],
-            let contentRect = CGRect(dictionaryRepresentation: contentRectDict as CFDictionary),
-            let contentScale = attachments[.contentScale] as? CGFloat else {
-            return nil
-        }
-        return (
-            evenPixelDimension(contentRect.width * contentScale),
-            evenPixelDimension(contentRect.height * contentScale)
         )
     }
 
@@ -326,33 +318,64 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         }
     }
 
-    /// Must be called on `queue`. Reads a `.screen` frame's real content size and, once the same
-    /// new size has been seen for pendingResizeThreshold consecutive frames (filtering out
-    /// single-frame noise — see pendingResize), hands it to handleContentResize. A reading below
-    /// minimumContentDimension is rejected outright and never becomes a pending candidate.
-    private func trackContentSize(from sampleBuffer: CMSampleBuffer) {
-        guard let currentSize = Self.currentContentPixelSize(from: sampleBuffer),
-            currentSize.width >= Self.minimumContentDimension,
-            currentSize.height >= Self.minimumContentDimension else {
+    /// Repeatedly calls pollForWindowResize on a timer until stop() cancels it. A first attempt at
+    /// this feature tried to read the captured window's current size from each `.screen` frame's
+    /// own SCStreamFrameInfo.contentRect/.contentScale attachments — but those describe where
+    /// within the *already-fixed* encoder canvas the real content currently sits, not the window's
+    /// true unconstrained size, so they read consistently wrong (once backwards entirely: a window
+    /// growing to fullscreen read as shrinking). Polling SCShareableContent instead asks the OS for
+    /// the window's actual current frame — ground truth, not a value derived from our own stale
+    /// encoder configuration.
+    private func startResizePolling() {
+        resizePollingTask = Task { [weak self] in
+            while let self, !Task.isCancelled {
+                try? await Task.sleep(nanoseconds: Self.resizePollInterval)
+                guard !Task.isCancelled else { return }
+                await self.pollForWindowResize()
+            }
+        }
+    }
+
+    private func pollForWindowResize() async {
+        guard let recordedWindowID else { return }
+        guard let content = try? await SCShareableContent.excludingDesktopWindows(false, onScreenWindowsOnly: false),
+            let window = content.windows.first(where: { $0.windowID == recordedWindowID }) else {
             return
         }
-        guard currentSize != videoPixelSize else {
+        let filter = SCContentFilter(desktopIndependentWindow: window)
+        let scale = CGFloat(filter.pointPixelScale)
+        let newSize = Self.downscaledIfNeeded(
+            width: Self.evenPixelDimension(filter.contentRect.width * scale),
+            height: Self.evenPixelDimension(filter.contentRect.height * scale)
+        )
+        queue.async { [self] in
+            considerResizeCandidate(newSize)
+        }
+    }
+
+    /// Must be called on `queue`. See pendingResize/resizePollConfirmations for why a candidate
+    /// must repeat before it's acted on, and minimumContentDimension for the sanity floor.
+    private func considerResizeCandidate(_ newSize: (width: Int, height: Int)) {
+        guard newSize.width >= Self.minimumContentDimension, newSize.height >= Self.minimumContentDimension else {
+            return
+        }
+        guard newSize != videoPixelSize else {
             pendingResize = nil
             return
         }
-        if let pending = pendingResize, pending.size == currentSize {
-            pendingResize?.consecutiveFrames += 1
+        if let pending = pendingResize, pending.size == newSize {
+            pendingResize?.consecutivePolls += 1
         } else {
-            pendingResize = (size: currentSize, consecutiveFrames: 1)
+            pendingResize = (size: newSize, consecutivePolls: 1)
         }
-        if let pendingResize, pendingResize.consecutiveFrames >= Self.pendingResizeThreshold {
+        if let pendingResize, pendingResize.consecutivePolls >= Self.resizePollConfirmations {
             self.pendingResize = nil
             handleContentResize(to: pendingResize.size)
         }
     }
 
     /// Must be called on `queue`. Reacts to the captured window's real content changing size
-    /// mid-recording (see currentContentPixelSize) by pushing the new size to the live stream —
+    /// mid-recording (see pollForWindowResize) by pushing the new size to the live stream —
     /// so future frames arrive correctly scaled instead of padded with black — and rolling over to
     /// a new segment, since an AVAssetWriterInput's dimensions are fixed once created.
     private func handleContentResize(to newSize: (width: Int, height: Int)) {
@@ -434,7 +457,6 @@ extension RecordingManager: SCStreamOutput {
                 // no real pixel data — feeding one into the H.264 hardware encoder can fail the
                 // whole writer with an opaque VideoToolbox error. Only encode .complete frames.
                 guard isCompleteVideoFrame(sampleBuffer) else { return }
-                trackContentSize(from: sampleBuffer)
                 if let videoInput, videoInput.isReadyForMoreMediaData {
                     videoInput.append(sampleBuffer)
                 } else if hasLoggedNotReady[type] != true {

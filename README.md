@@ -29,6 +29,7 @@ Most screen recorders either bury the feature inside a bloated all-in-one app, r
 - ⏸️ **Pause / resume** — cleanly stops both video and audio (no dead air, no frozen frame) and resumes on demand.
 - 🛡️ **Crash-resilient** — long recordings automatically roll over into new 1.5-hour segments, so a crash or power loss doesn't corrupt hours of footage.
 - 🪟 **Auto-stop on window close** — if you're recording a specific app window and it closes or crashes, RecRex saves what it captured and resets, just like hitting Stop.
+- 📐 **Adapts to window resizes** — if you're recording a specific app window and it resizes mid-recording (e.g. something inside it goes fullscreen, or you manually resize it), RecRex detects the change and starts a new, correctly-sized segment instead of leaving black bars around the shrunk or repositioned content.
 - 📁 **Just works with Finder** — every finished recording is saved to `~/Downloads` with a clean, sortable timestamped filename, and the folder opens automatically when you're done.
 - 🔒 **Sandboxed** — RecRex runs inside the macOS App Sandbox, scoped only to Downloads access and microphone input.
 
