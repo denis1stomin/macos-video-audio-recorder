@@ -198,24 +198,6 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         )
     }
 
-    /// A rough screen-content H.264 target (bits per pixel per frame) — enough to keep UI text
-    /// legible without VideoToolbox's own uncapped default (observed to produce ~2.4 GB for a
-    /// 70-minute full-screen recording, before this and the resolution/frame-rate caps above)
-    /// growing unbounded on a high-resolution display. Clamped so a tiny recorded window doesn't
-    /// starve for bits and a max-size capture doesn't run away either.
-    ///
-    /// An earlier, much lower value here (0.06 bpp, 1.5–8 Mbps clamp) was found — by real
-    /// recording, not just math — to produce visibly blurry text: at 1080x592 it targeted 1.5 Mbps,
-    /// but VideoToolbox's rate control actually only spent ~518 kbps on that mostly-static screen
-    /// content (its "average bitrate" is a soft target it can undershoot considerably, not a floor
-    /// it fills). Raised well above what the math alone would suggest is needed, specifically to
-    /// leave headroom for that undershoot.
-    private static func averageVideoBitRate(width: Int, height: Int) -> Int {
-        let bitsPerPixelPerFrame = 0.15
-        let raw = Double(width * height) * videoFrameRate * bitsPerPixelPerFrame
-        return min(max(Int(raw.rounded()), 3_000_000), 10_000_000)
-    }
-
     /// Mono at 64 kbps AAC is plenty for a meeting's speech content — halves the audio bitrate
     /// from the original 128 kbps/stereo, and putting all those bits into one channel instead of
     /// splitting them across two keeps quality closer to transparent than stereo at the same
@@ -251,8 +233,19 @@ final class RecordingManager: NSObject, @unchecked Sendable {
                 AVVideoCodecKey: AVVideoCodecType.h264,
                 AVVideoWidthKey: width,
                 AVVideoHeightKey: height,
+                // No explicit AVVideoAverageBitRateKey: it's a soft target VideoToolbox's rate
+                // control can undershoot considerably on mostly-static screen content (measured
+                // ~518 kbps actual against a 1.5 Mbps target, then ~561 kbps against 3 Mbps —
+                // raising the number barely moved the real result), which is what made two earlier
+                // attempts at an explicit bitrate look visibly blurry. Left unset, VideoToolbox
+                // falls back to its own complexity-adaptive default — the same behavior that, before
+                // any of these encoding changes, was explicitly praised as good quality (just too
+                // large a file at uncapped native resolution/frame rate). The resolution cap
+                // (maxVideoDimension) and frame rate cap (videoFrameRate) above are what now keep
+                // file size in check instead, by simply feeding the adaptive encoder far fewer
+                // pixels and frames to begin with — a guaranteed size reduction, unlike fighting the
+                // rate controller's soft bitrate target.
                 AVVideoCompressionPropertiesKey: [
-                    AVVideoAverageBitRateKey: Self.averageVideoBitRate(width: width, height: height),
                     AVVideoExpectedSourceFrameRateKey: Int(Self.videoFrameRate),
                     AVVideoProfileLevelKey: AVVideoProfileLevelH264HighAutoLevel,
                 ],
