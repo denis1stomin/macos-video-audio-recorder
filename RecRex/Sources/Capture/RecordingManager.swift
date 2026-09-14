@@ -38,6 +38,13 @@ final class RecordingManager: NSObject, @unchecked Sendable {
     /// frames sized to the stale dimensions, and the new, differently-scaled content only fills part
     /// of that frame, leaving the rest black.
     private(set) var videoPixelSize: (width: Int, height: Int) = (1920, 1080)
+    /// A candidate new size from currentContentPixelSize, and how many consecutive frames have
+    /// reported it — see handleContentResize. The frames right after a stream/segment
+    /// reconfiguration can report transient, noisy contentRect/contentScale values (observed once
+    /// as a single bad frame cascading three back-to-back rollovers down to a crashing 0x0 "resize");
+    /// requiring the same size to repeat for pendingResizeThreshold frames before acting filters
+    /// that out, since real noise isn't self-consistent across consecutive frames.
+    private var pendingResize: (size: (width: Int, height: Int), consecutiveFrames: Int)?
     private var hasLoggedFirstSample: [SCStreamOutputType: Bool] = [:]
     private var hasLoggedNotReady: [SCStreamOutputType: Bool] = [:]
     /// Where the current segment should end up once finished (in Downloads). We write to a
@@ -157,6 +164,16 @@ final class RecordingManager: NSObject, @unchecked Sendable {
     /// other proportionally so aspect ratio (and therefore no letterboxing) is preserved.
     private static let maxVideoDimension = 1080
 
+    /// A hard floor below which a currentContentPixelSize reading is rejected outright as garbage
+    /// rather than ever treated as a real resize — no legitimate captured window content should be
+    /// this small, but a transient bad frame reading a near-zero contentRect has been observed, and
+    /// unconditionally acting on it crashed AVAssetWriter with a 0x0 video size.
+    private static let minimumContentDimension = 64
+
+    /// How many consecutive frames must agree on the same new size before handleContentResize
+    /// commits to it — filters out single-frame noise from a genuine, stable resize.
+    private static let pendingResizeThreshold = 10
+
     private static func downscaledIfNeeded(width: Int, height: Int) -> (width: Int, height: Int) {
         let longestEdge = max(width, height)
         guard longestEdge > maxVideoDimension else { return (width, height) }
@@ -213,6 +230,7 @@ final class RecordingManager: NSObject, @unchecked Sendable {
 
     /// Must be called on `queue`.
     private func beginSegmentWriter() throws {
+        pendingResize = nil
         let fileName = FileNaming.segmentFileName(baseName: baseFileName, segmentIndex: segmentIndex)
         let proposedURL = downloadsDirectory.appendingPathComponent(fileName)
         let finalURL = FileNaming.availableURL(for: proposedURL)
@@ -308,6 +326,31 @@ final class RecordingManager: NSObject, @unchecked Sendable {
         }
     }
 
+    /// Must be called on `queue`. Reads a `.screen` frame's real content size and, once the same
+    /// new size has been seen for pendingResizeThreshold consecutive frames (filtering out
+    /// single-frame noise — see pendingResize), hands it to handleContentResize. A reading below
+    /// minimumContentDimension is rejected outright and never becomes a pending candidate.
+    private func trackContentSize(from sampleBuffer: CMSampleBuffer) {
+        guard let currentSize = Self.currentContentPixelSize(from: sampleBuffer),
+            currentSize.width >= Self.minimumContentDimension,
+            currentSize.height >= Self.minimumContentDimension else {
+            return
+        }
+        guard currentSize != videoPixelSize else {
+            pendingResize = nil
+            return
+        }
+        if let pending = pendingResize, pending.size == currentSize {
+            pendingResize?.consecutiveFrames += 1
+        } else {
+            pendingResize = (size: currentSize, consecutiveFrames: 1)
+        }
+        if let pendingResize, pendingResize.consecutiveFrames >= Self.pendingResizeThreshold {
+            self.pendingResize = nil
+            handleContentResize(to: pendingResize.size)
+        }
+    }
+
     /// Must be called on `queue`. Reacts to the captured window's real content changing size
     /// mid-recording (see currentContentPixelSize) by pushing the new size to the live stream —
     /// so future frames arrive correctly scaled instead of padded with black — and rolling over to
@@ -391,9 +434,7 @@ extension RecordingManager: SCStreamOutput {
                 // no real pixel data — feeding one into the H.264 hardware encoder can fail the
                 // whole writer with an opaque VideoToolbox error. Only encode .complete frames.
                 guard isCompleteVideoFrame(sampleBuffer) else { return }
-                if let currentSize = Self.currentContentPixelSize(from: sampleBuffer), currentSize != videoPixelSize {
-                    handleContentResize(to: currentSize)
-                }
+                trackContentSize(from: sampleBuffer)
                 if let videoInput, videoInput.isReadyForMoreMediaData {
                     videoInput.append(sampleBuffer)
                 } else if hasLoggedNotReady[type] != true {
